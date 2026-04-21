@@ -82,15 +82,17 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    logger.info('MongoDB connected successfully');
-    app.listen(PORT, () => logger.info(`HIMS server running on http://localhost:${PORT}`));
-  })
-  .catch((err) => {
-    logger.error('MongoDB connection failed', { error: err.message });
-    process.exit(1);
-  });
+if (process.env.NODE_ENV !== 'test') {
+  mongoose
+    .connect(MONGO_URI)
+    .then(() => {
+      logger.info('MongoDB connected successfully');
+      app.listen(PORT, () => logger.info(`HIMS server running on http://localhost:${PORT}`));
+    })
+    .catch((err) => {
+      logger.error('MongoDB connection failed', { error: err.message });
+      process.exit(1);
+    });
+}
 
 module.exports = app;

@@ -4,14 +4,6 @@ const User = require('../models/User.model');
 const jwt = require('jsonwebtoken');
 const { logAction } = require('../utils/auditLog');
 
-/**
- * Generate a signed JWT token
- */
-const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  });
-};
 
 /**
  * @route   POST /api/org/register
@@ -77,7 +69,10 @@ const registerOrganization = async (req, res) => {
       organization: {
         id: organization._id,
         name: organization.name,
-        isVerified: organization.isVerified
+        type: organization.type,
+        email: organization.email,
+        isVerified: organization.isVerified,
+        verificationStatus: organization.verificationStatus
       }
     });
   } catch (error) {
@@ -108,7 +103,7 @@ const createStaff = async (req, res) => {
     }
 
     // 3. Prevent creating Patients or other high-level roles
-    const allowedRoles = ['Doctor', 'Nurse', 'Receptionist', 'Pharmacist', 'Lab_Technician'];
+    const allowedRoles = ['DOCTOR', 'NURSE', 'RECEPTIONIST', 'PHARMACIST', 'LAB_TECHNICIAN'];
     if (!allowedRoles.includes(role)) {
       return res.status(400).json({ success: false, message: 'Invalid role for staff creation.' });
     }

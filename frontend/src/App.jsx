@@ -1,124 +1,127 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import Sidebar from './components/layout/Sidebar';
-import Header from './components/layout/Header';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import Layout from './components/layout/Layout';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
-import PatientDashboard from './pages/PatientDashboard';
 import DoctorDashboard from './pages/DoctorDashboard';
+import NurseDashboard from './pages/NurseDashboard';
+import PatientDashboard from './pages/PatientDashboard';
 import ReceptionistDashboard from './pages/ReceptionistDashboard';
 import PharmacyDashboard from './pages/PharmacyDashboard';
 import LabTechnicianDashboard from './pages/LabTechnicianDashboard';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import BloodBankDashboard from './pages/BloodBankDashboard';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import PatientEMR from './pages/PatientEMR';
-import Profile from './pages/Profile';
-import OrgRegister from './pages/OrgRegister';
 import OrgDashboard from './pages/OrgDashboard';
 import StaffManagement from './pages/StaffManagement';
-
-const DashboardLayout = () => (
-  <div className="min-h-screen bg-surface flex">
-    <Sidebar />
-    <div className="flex-1 ml-64 flex flex-col">
-      <Header />
-      <main className="flex-1 overflow-y-auto">
-        <Outlet />
-      </main>
-    </div>
-  </div>
-);
-
-const AuthLayout = () => (
-  <div className="min-h-screen bg-surface">
-    <Outlet />
-  </div>
-);
+import './App.css';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Auth Routes */}
-        <Route element={<AuthLayout />}>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
-          <Route path="/auth/org-register" element={<OrgRegister />} />
-        </Route>
-
-        {/* Protected Dashboard Routes wrapped with DashboardLayout */}
-        <Route
-          element={
+          
+          {/* Protected Routes (Authenticated only) */}
+          <Route element={
             <ProtectedRoute>
-              <DashboardLayout />
+              <Layout />
             </ProtectedRoute>
-          }
-        >
-          <Route path="/" element={<Navigate to="/admin" replace />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/superadmin" element={
-            <ProtectedRoute allowedRoles={['Super_Admin']}>
-              <SuperAdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin" element={
-            <ProtectedRoute allowedRoles={['Hospital_Admin', 'Super_Admin']}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/reception" element={
-            <ProtectedRoute allowedRoles={['Receptionist', 'Hospital_Admin', 'Super_Admin']}>
-              <ReceptionistDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/doctor" element={
-            <ProtectedRoute allowedRoles={['Doctor']}>
-              <DoctorDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/patient/:id/emr" element={
-            <ProtectedRoute allowedRoles={['Doctor', 'Hospital_Admin', 'Super_Admin']}>
-              <PatientEMR />
-            </ProtectedRoute>
-          } />
-          <Route path="/patient" element={
-            <ProtectedRoute allowedRoles={['Patient']}>
-              <PatientDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/pharmacy" element={
-            <ProtectedRoute allowedRoles={['Pharmacist', 'Hospital_Admin']}>
-              <PharmacyDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/lab" element={
-            <ProtectedRoute allowedRoles={['Lab_Technician', 'Doctor', 'Hospital_Admin']}>
-              <LabTechnicianDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/bloodbank" element={
-            <ProtectedRoute allowedRoles={['Lab_Technician', 'Hospital_Admin', 'Super_Admin']}>
-              <BloodBankDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/org-dashboard" element={
-            <ProtectedRoute allowedRoles={['ORG_ADMIN']}>
-              <OrgDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/org-staff" element={
-            <ProtectedRoute allowedRoles={['ORG_ADMIN']}>
-              <StaffManagement />
-            </ProtectedRoute>
-          } />
-        </Route>
+          }>
+            <Route path="/" element={<Navigate to="/admin" replace />} />
+            <Route path="/profile" element={<Profile />} />
+            
+            <Route path="/super-admin" element={
+              <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+                <SuperAdminDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin" element={
+              <ProtectedRoute allowedRoles={['HOSPITAL_ADMIN', 'SUPER_ADMIN']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/doctor" element={
+              <ProtectedRoute allowedRoles={['DOCTOR']}>
+                <DoctorDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/nurse" element={
+              <ProtectedRoute allowedRoles={['NURSE']}>
+                <NurseDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/reception" element={
+              <ProtectedRoute allowedRoles={['RECEPTIONIST']}>
+                <ReceptionistDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/pharmacy" element={
+              <ProtectedRoute allowedRoles={['PHARMACIST']}>
+                <PharmacyDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/lab" element={
+              <ProtectedRoute allowedRoles={['LAB_TECHNICIAN']}>
+                <LabTechnicianDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/bloodbank" element={
+              <ProtectedRoute allowedRoles={['LAB_TECHNICIAN', 'HOSPITAL_ADMIN', 'SUPER_ADMIN']}>
+                <BloodBankDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/dashboard" element={
+              <ProtectedRoute allowedRoles={['PATIENT']}>
+                <PatientDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/patient" element={
+              <ProtectedRoute allowedRoles={['PATIENT']}>
+                <PatientDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/patient/emr" element={
+              <ProtectedRoute allowedRoles={['PATIENT', 'DOCTOR', 'NURSE']}>
+                <PatientEMR />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/org-dashboard" element={
+              <ProtectedRoute allowedRoles={['ORG_ADMIN']}>
+                <OrgDashboard />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/org-staff" element={
+              <ProtectedRoute allowedRoles={['ORG_ADMIN']}>
+                <StaffManagement />
+              </ProtectedRoute>
+            } />
+          </Route>
 
-        {/* Catch-all redirect to login */}
-        <Route path="*" element={<Navigate to="/auth/login" replace />} />
-      </Routes>
-    </Router>
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/auth/login" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

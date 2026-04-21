@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { appointmentAPI, prescriptionAPI, labReportAPI, inpatientAPI, shiftAPI } from '../services/api.service';
 import { useAuth } from '../context/AuthContext';
+import useAutoRefresh from '../hooks/useAutoRefresh';
+import useMutation from '../hooks/useMutation';
 
 export const DoctorDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [appointments, setAppointments] = useState([]);
-  const [admissions, setAdmissions] = useState([]);
-  const [shifts, setShifts] = useState([]);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'appointments', 'inpatients', 'schedule'
-  const [isLoading, setIsLoading] = useState(true);
   
   // Prescription Form State
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [medications, setMedications] = useState([{ name: '', dosage: '', frequency: 'Daily', duration: '', notes: '' }]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Lab Order Form State
   const [showLabModal, setShowLabModal] = useState(false);
@@ -24,95 +21,91 @@ export const DoctorDashboard = () => {
   const [priority, setPriority] = useState('Routine');
 
   // Fetch data
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      const [apptRes, admRes, shiftRes] = await Promise.all([
-        appointmentAPI.getAll(),
-        inpatientAPI.getAdmissions(),
-        shiftAPI.getAll()
-      ]);
-      setAppointments(apptRes.data.appointments || []);
-      setAdmissions(admRes.data.admissions || []);
-      setShifts(shiftRes.data.shifts || []);
-    } catch (error) {
-      console.error('Error fetching doctor data:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const fetchDashboardData = async () => {
+    const [apptRes, admRes, shiftRes] = await Promise.all([
+      appointmentAPI.getAll(),
+      inpatientAPI.getAdmissions(),
+      shiftAPI.getAll()
+    ]);
+    return {
+      appointments: apptRes.data.appointments || [],
+      admissions: admRes.data.admissions || [],
+      shifts: shiftRes.data.shifts || []
+    };
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { data, isLoading, refetch } = useAutoRefresh(fetchDashboardData);
+  const { handleMutation, isLoading: isSubmitting } = useMutation();
+
+  const appointments = data?.appointments || [];
+  const admissions = data?.admissions || [];
+  const shifts = data?.shifts || [];
 
   const handleStartConsultation = async (appt) => {
-    try {
-      if (appt.status !== 'In Progress' && appt.status !== 'Completed') {
-        await appointmentAPI.updateStatus(appt._id, { status: 'In Progress' });
-        fetchData();
-      }
-      setSelectedAppointment(appt);
-      setShowModal(true);
-    } catch (error) {
-      alert('Failed to start consultation.');
+    if (appt.status !== 'In Progress' && appt.status !== 'Completed') {
+      await handleMutation(
+        () => appointmentAPI.updateStatus(appt._id, { status: 'In Progress' }),
+        { refetch: refetch }
+      );
     }
+    setSelectedAppointment(appt);
+    setShowModal(true);
   };
 
   const handlePrescribe = async (e) => {
     e.preventDefault();
     if (!selectedAppointment) return;
     
-    try {
-      setIsSubmitting(true);
-      await prescriptionAPI.create({
-        patient: selectedAppointment.patient._id,
-        appointment: selectedAppointment._id,
-        medications: medications.map(m => ({
-          name: m.name,
-          dosage: m.dosage || 'As prescribed',
-          frequency: m.frequency || 'Daily',
-          duration: m.duration,
-          notes: m.notes
-        }))
-      });
-      await appointmentAPI.updateStatus(selectedAppointment._id, { status: 'Completed' });
-      
-      setShowModal(false);
-      setMedications([{ name: '', dosage: '', frequency: 'Daily', duration: '', notes: '' }]);
-      fetchData();
-      alert('Prescription created successfully!');
-    } catch (error) {
-      console.error('Failed to create prescription', error);
-      alert('Failed to create prescription.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleMutation(
+      async () => {
+        await prescriptionAPI.create({
+          patient: selectedAppointment.patient._id,
+          appointment: selectedAppointment._id,
+          medications: medications.map(m => ({
+            name: m.name,
+            dosage: m.dosage || 'As prescribed',
+            frequency: m.frequency || 'Daily',
+            duration: m.duration,
+            notes: m.notes
+          }))
+        });
+        await appointmentAPI.updateStatus(selectedAppointment._id, { status: 'Completed' });
+      },
+      {
+        refetch: refetch,
+        onSuccess: () => {
+          setShowModal(false);
+          setMedications([{ name: '', dosage: '', frequency: 'Daily', duration: '', notes: '' }]);
+          alert('Prescription created successfully!');
+        },
+        onError: () => alert('Failed to create prescription.')
+      }
+    );
   };
 
   const handleOrderLabSubmit = async (e) => {
     e.preventDefault();
     if (!selectedAppointment) return;
 
-    try {
-      setIsSubmitting(true);
-      await labReportAPI.order({
+    await handleMutation(
+      () => labReportAPI.order({
         patient: selectedAppointment.patient._id,
         testType: testType,
         testCode: 'GEN-01',
         sampleType: 'Blood',
         priority: priority
-      });
-      setShowLabModal(false);
-      setTestType('');
-      setPriority('Routine');
-      alert('Lab Test ordered successfully!');
-    } catch (error) {
-      console.error('Failed to order lab test', error);
-      alert('Failed to order lab test.');
-    } finally {
-      setIsSubmitting(false);
-    }
+      }),
+      {
+        refetch: refetch,
+        onSuccess: () => {
+          setShowLabModal(false);
+          setTestType('');
+          setPriority('Routine');
+          alert('Lab Test ordered successfully!');
+        },
+        onError: () => alert('Failed to order lab test.')
+      }
+    );
   };
 
   const pendingAppointments = appointments.filter(a => a.status !== 'Completed' && a.status !== 'Canceled');

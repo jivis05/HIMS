@@ -5,10 +5,18 @@ const { logAction } = require('../utils/auditLog');
 /**
  * Generate a signed JWT token for the authenticated user.
  */
-const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  });
+const generateToken = (user) => {
+  return jwt.sign(
+    { 
+      id: user._id, 
+      role: user.role, 
+      organizationId: user.organizationId 
+    }, 
+    process.env.JWT_SECRET, 
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    }
+  );
 };
 
 /**
@@ -21,15 +29,15 @@ const register = async (req, res) => {
     let { firstName, lastName, email, password, role } = req.body;
 
     // Only allow role = PATIENT for self-registration
-    if (role && role !== 'Patient') {
+    if (role && role !== 'PATIENT') {
       return res.status(403).json({ 
         success: false, 
         message: 'Forbidden: Only patients can self-register. Staff accounts must be created by an organization administrator.' 
       });
     }
 
-    // Force role to Patient even if not provided or provided correctly
-    role = 'Patient';
+    // Force role to PATIENT even if not provided or provided correctly
+    role = 'PATIENT';
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -44,7 +52,7 @@ const register = async (req, res) => {
       password, 
       role 
     });
-    const token = generateToken(user._id);
+    const token = generateToken(user);
 
     await logAction(user._id, 'REGISTER', 'Auth', `New patient account registered: ${email}`, 'Info', req.ip);
 
@@ -58,6 +66,7 @@ const register = async (req, res) => {
         lastName:  user.lastName,
         email:     user.email,
         role:      user.role,
+        organizationId: user.organizationId
       },
     });
   } catch (error) {
@@ -80,7 +89,7 @@ const registerStaff = async (req, res) => {
     }
 
     const user = await User.create({ firstName, lastName, email, password, role });
-    const token = generateToken(user._id);
+    const token = generateToken(user);
 
     await logAction(req.user._id, 'REGISTER_STAFF', 'Auth', `Admin created ${role} account: ${email}`, 'Info', req.ip);
 
@@ -94,6 +103,7 @@ const registerStaff = async (req, res) => {
         lastName:  user.lastName,
         email:     user.email,
         role:      user.role,
+        organizationId: user.organizationId
       },
     });
   } catch (error) {
@@ -123,7 +133,7 @@ const login = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Your account has been deactivated. Contact admin.' });
     }
 
-    const token = generateToken(user._id);
+    const token = generateToken(user);
 
     await logAction(user._id, 'LOGIN', 'Auth', `User logged in: ${email}`, 'Info', req.ip);
 
@@ -137,6 +147,7 @@ const login = async (req, res) => {
         lastName:  user.lastName,
         email:     user.email,
         role:      user.role,
+        organizationId: user.organizationId
       },
     });
   } catch (error) {

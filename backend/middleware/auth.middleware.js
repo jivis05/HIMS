@@ -57,7 +57,7 @@ const authorize = (...roles) => {
 const checkOrgAccess = (req, res, next) => {
   const resourceOrgId = req.params.orgId || req.body.organizationId || req.query.organizationId;
   
-  if (req.user.role === 'Super_Admin') return next();
+  if (req.user.role === 'SUPER_ADMIN') return next();
 
   if (!req.user.organizationId || req.user.organizationId.toString() !== resourceOrgId) {
     return res.status(403).json({ 

@@ -1,27 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { orgAPI } from '../services/api.service';
 import { useAuth } from '../context/AuthContext';
+import useAutoRefresh from '../hooks/useAutoRefresh';
 
 export const OrgDashboard = () => {
-  const [org, setOrg] = useState(null);
-  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  useEffect(() => {
-    const fetchOrgProfile = async () => {
-      try {
-        const response = await axios.get('/api/org/profile');
-        setOrg(response.data.organization);
-      } catch (err) {
-        console.error('Failed to fetch org profile', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrgProfile();
-  }, []);
+  const fetchOrgProfile = async () => {
+    const response = await orgAPI.getProfile();
+    return response.data.organization;
+  };
 
-  if (loading) return <div className="p-8 text-center">Loading dashboard...</div>;
+  const { data: org, isLoading, error } = useAutoRefresh(fetchOrgProfile);
+
+  if (isLoading && !org) return <div className="p-8 text-center">Loading dashboard...</div>;
+  if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
 
   return (
     <div className="p-8 max-w-7xl mx-auto">

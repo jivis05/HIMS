@@ -57,7 +57,10 @@ export const bloodBankAPI = {
 // ── Super Admin Endpoints ────────────────────────────────────────────────────
 export const superAdminAPI = {
   getLogs:  () => API.get('/superadmin/logs'),
-  getStats: () => API.get('/superadmin/stats')
+  getStats: () => API.get('/superadmin/stats'),
+  getOrgs:  () => API.get('/superadmin/orgs'),
+  verifyOrg: (id) => API.patch(`/superadmin/orgs/${id}/verify`),
+  rejectOrg: (id) => API.patch(`/superadmin/orgs/${id}/reject`),
 };
 
 // ── Analytics Endpoints ──────────────────────────────────────────────────────
@@ -123,6 +126,14 @@ export const inpatientAPI = {
 export const bedAPI = {
   getAll: () => API.get('/inpatient/beds'),
   create: (data) => API.post('/inpatient/beds', data),
+};
+
+// ── Organization Endpoints ───────────────────────────────────────────────────
+export const orgAPI = {
+  getProfile: () => API.get('/org/profile'),
+  updateProfile: (data) => API.put('/org/profile', data),
+  getStaff: () => API.get('/org/staff'),
+  createStaff: (data) => API.post('/org/users', data),
 };
 
 export default API;

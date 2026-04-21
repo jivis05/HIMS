@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 
 export const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '', password: '', role: 'Patient'
+    firstName: '', lastName: '', email: '', password: '', role: 'PATIENT'
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);

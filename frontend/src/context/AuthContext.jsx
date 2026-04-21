@@ -57,8 +57,26 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const refreshUserSession = async () => {
+    try {
+      const { data } = await authAPI.getMe();
+      if (data && data.user) {
+        setUser(data.user);
+        localStorage.setItem('hims_user', JSON.stringify(data.user));
+        return data.user;
+      }
+    } catch (error) {
+      console.error('Failed to refresh user session:', error);
+      // If we get 401 Unauthorized, we should probably logout
+      if (error.response?.status === 401) {
+        logout();
+      }
+    }
+    return null;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUserSession }}>
       {children}
     </AuthContext.Provider>
   );

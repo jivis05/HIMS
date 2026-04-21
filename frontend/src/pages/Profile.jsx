@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { userAPI } from '../services/api.service';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '../hooks/useMutation';
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -19,9 +20,9 @@ const Profile = () => {
     bloodGroup: ''
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const navigate = useNavigate();
+  const { handleMutation, isLoading } = useMutation();
 
   useEffect(() => {
     if (user) {
@@ -48,21 +49,21 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     setMessage({ type: '', text: '' });
-    try {
-      const res = await userAPI.update(user.id, formData);
-      if (res.data.success) {
-        setMessage({ type: 'success', text: 'Profile updated successfully!' });
-        setIsEditing(false);
-        // Update local storage user data if needed, but Context usually handles it on reload
-        // For HIMS, we might need a sync function in AuthContext
+    
+    await handleMutation(
+      () => userAPI.update(user.id, formData),
+      {
+        refreshSession: true,
+        onSuccess: () => {
+          setMessage({ type: 'success', text: 'Profile updated successfully!' });
+          setIsEditing(false);
+        },
+        onError: (errMessage) => {
+          setMessage({ type: 'error', text: errMessage || 'Failed to update profile.' });
+        }
       }
-    } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to update profile.' });
-    } finally {
-      setIsLoading(false);
-    }
+    );
   };
 
   const handleDeleteAccount = async () => {

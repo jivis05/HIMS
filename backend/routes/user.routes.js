@@ -12,7 +12,7 @@ const Organization = require('../models/Organization.model');
 const router = express.Router();
 
 // GET /api/users - Admin only: list all users
-router.get('/', protect, authorize('Hospital_Admin', 'Super_Admin'), async (req, res) => {
+router.get('/', protect, authorize('HOSPITAL_ADMIN', 'SUPER_ADMIN'), async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.json({ success: true, users });
@@ -24,7 +24,7 @@ router.get('/', protect, authorize('Hospital_Admin', 'Super_Admin'), async (req,
 // GET /api/users/doctors - Get all doctors from verified organizations
 router.get('/doctors', protect, async (req, res) => {
   try {
-    const doctors = await User.find({ role: 'Doctor' })
+    const doctors = await User.find({ role: 'DOCTOR' })
       .populate({
         path: 'organizationId',
         match: { isVerified: true },

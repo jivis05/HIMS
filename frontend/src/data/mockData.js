@@ -47,7 +47,7 @@ export const doctorActions = [
 ];
 
 export const sidebarLinks = [
-  { id: 'superadmin', label: 'Super Admin', icon: 'security', path: '/superadmin' },
+  { id: 'superadmin', label: 'Super Admin', icon: 'security', path: '/super-admin' },
   { id: 'admin', label: 'Admin Dashboard', icon: 'admin_panel_settings', path: '/admin' },
   { id: 'reception', label: 'Reception', icon: 'assignment_ind', path: '/reception' },
   { id: 'doctor', label: 'Doctor Dashboard', icon: 'stethoscope', path: '/doctor' },
@@ -55,8 +55,8 @@ export const sidebarLinks = [
   { id: 'pharmacy', label: 'Pharmacy', icon: 'medication', path: '/pharmacy' },
   { id: 'lab', label: 'Laboratory', icon: 'science', path: '/lab' },
   { id: 'bloodbank', label: 'Blood Bank', icon: 'volunteer_activism', path: '/bloodbank' },
-  { id: 'orgadmin', label: 'Org Dashboard', icon: 'corporate_fare', path: '/org-dashboard' },
-  { id: 'orgstaff', label: 'Staff Management', icon: 'groups', path: '/org-staff' },
+  { id: 'org', label: 'Org Dashboard', icon: 'corporate_fare', path: '/org-dashboard' },
+  { id: 'org-staff', label: 'Staff Management', icon: 'groups', path: '/org-staff' },
 ];
 
 export const receptionistStats = [

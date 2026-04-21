@@ -3,14 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 // Role to redirect path mapping
-const ROLE_REDIRECT = {
-  Hospital_Admin: '/admin',
-  Super_Admin: '/admin',
-  Receptionist: '/reception',
-  Doctor: '/doctor',
-  Patient: '/patient',
-  Pharmacist: '/pharmacy',
-  Lab_Technician: '/lab',
+const ROLE_REDIRECTS = {
+  PATIENT: '/dashboard',
+  DOCTOR: '/doctor',
+  NURSE: '/nurse',
+  RECEPTIONIST: '/reception',
+  PHARMACIST: '/pharmacy',
+  LAB_TECHNICIAN: '/lab',
+  ORG_ADMIN: '/org-dashboard',
+  SUPER_ADMIN: '/super-admin',
+  HOSPITAL_ADMIN: '/admin',
 };
 
 export const Login = () => {
@@ -27,7 +29,7 @@ export const Login = () => {
     setIsLoading(true);
     try {
       const user = await login(email, password);
-      const redirectPath = ROLE_REDIRECT[user.role] || '/patient';
+      const redirectPath = ROLE_REDIRECTS[user.role] || '/dashboard';
       navigate(redirectPath, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');

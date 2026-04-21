@@ -9,14 +9,14 @@ const userSchema = new mongoose.Schema(
     password:  { type: String, required: true, minlength: 6, select: false },
     role: {
       type: String,
-      enum: ['Patient', 'Doctor', 'Nurse', 'Receptionist', 'Pharmacist', 'Lab_Technician', 'Blood_Bank_Staff', 'Hospital_Admin', 'Super_Admin', 'ORG_ADMIN'],
-      default: 'Patient'
+      enum: ['PATIENT', 'DOCTOR', 'NURSE', 'RECEPTIONIST', 'PHARMACIST', 'LAB_TECHNICIAN', 'BLOOD_BANK_STAFF', 'HOSPITAL_ADMIN', 'SUPER_ADMIN', 'ORG_ADMIN'],
+      default: 'PATIENT'
     },
     organizationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organization',
       required: function() {
-        return this.role !== 'Patient' && this.role !== 'Super_Admin';
+        return this.role !== 'PATIENT' && this.role !== 'SUPER_ADMIN';
       }
     },
     createdBy: {
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     isApproved: {
       type: Boolean,
       default: function() {
-        return this.role === 'Patient';
+        return this.role === 'PATIENT';
       }
     },
     phone:       { type: String, trim: true },

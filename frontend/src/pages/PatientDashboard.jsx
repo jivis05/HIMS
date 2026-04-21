@@ -1,78 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { appointmentAPI, prescriptionAPI, labReportAPI, userAPI, inpatientAPI } from '../services/api.service';
 import { useAuth } from '../context/AuthContext';
+import useAutoRefresh from '../hooks/useAutoRefresh';
+import useMutation from '../hooks/useMutation';
 
 export const PatientDashboard = () => {
   const { user } = useAuth();
   
-  const [appointments, setAppointments] = useState([]);
-  const [prescriptions, setPrescriptions] = useState([]);
-  const [labReports, setLabReports] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [admission, setAdmission] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
   // Booking Form State
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [chiefComplaint, setChiefComplaint] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      const [apptRes, rxRes, labRes, docRes, admRes] = await Promise.all([
-        appointmentAPI.getAll(),
-        prescriptionAPI.getAll(),
-        labReportAPI.getAll(),
-        userAPI.getDoctors(),
-        inpatientAPI.getAdmissions()
-      ]);
-      setAppointments(apptRes.data.appointments || []);
-      setPrescriptions(rxRes.data.prescriptions || []);
-      setLabReports(labRes.data.labReports || []);
-      setDoctors(docRes.data.doctors || []);
-      
-      // Find my active admission
-      const myAdmission = (admRes.data.admissions || []).find(a => a.patient?._id === user?._id);
-      setAdmission(myAdmission);
-    } catch (error) {
-      console.error('Failed to fetch patient data', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const fetchDashboardData = async () => {
+    const [apptRes, rxRes, labRes, docRes, admRes] = await Promise.all([
+      appointmentAPI.getAll(),
+      prescriptionAPI.getAll(),
+      labReportAPI.getAll(),
+      userAPI.getDoctors(),
+      inpatientAPI.getAdmissions()
+    ]);
+    
+    // Find my active admission
+    const myAdmission = (admRes.data.admissions || []).find(a => a.patient?._id === user?._id);
+
+    return {
+      appointments: apptRes.data.appointments || [],
+      prescriptions: rxRes.data.prescriptions || [],
+      labReports: labRes.data.labReports || [],
+      doctors: docRes.data.doctors || [],
+      admission: myAdmission
+    };
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { data, isLoading, refetch } = useAutoRefresh(fetchDashboardData);
+  const { handleMutation, isLoading: isSubmitting } = useMutation();
+
+  const appointments = data?.appointments || [];
+  const prescriptions = data?.prescriptions || [];
+  const labReports = data?.labReports || [];
+  const doctors = data?.doctors || [];
+  const admission = data?.admission || null;
 
   const handleBookAppointment = async (e) => {
     e.preventDefault();
-    try {
-      setIsSubmitting(true);
-      await appointmentAPI.create({
+    await handleMutation(
+      () => appointmentAPI.create({
         doctor: selectedDoctor,
         date: date,
         startTime: startTime,
         type: 'General Checkup',
         chiefComplaint: chiefComplaint
-      });
-      setShowBookingModal(false);
-      setSelectedDoctor('');
-      setDate('');
-      setStartTime('');
-      setChiefComplaint('');
-      alert('Appointment booked successfully!');
-      fetchData();
-    } catch (error) {
-      console.error('Error booking appointment:', error);
-      alert('Failed to book appointment.');
-    } finally {
-      setIsSubmitting(false);
-    }
+      }),
+      {
+        refetch: refetch,
+        onSuccess: () => {
+          setShowBookingModal(false);
+          setSelectedDoctor('');
+          setDate('');
+          setStartTime('');
+          setChiefComplaint('');
+          alert('Appointment booked successfully!');
+        },
+        onError: () => alert('Failed to book appointment.')
+      }
+    );
   };
 
   const activeAppointments = appointments.filter(a => a.status !== 'Completed' && a.status !== 'Canceled');

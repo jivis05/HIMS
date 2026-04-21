@@ -1,6 +1,6 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const app = require('../server'); // Make sure server.js exports app
+const app = require('../server');
 const Organization = require('../models/Organization.model');
 const User = require('../models/User.model');
 
@@ -9,8 +9,8 @@ describe('Organization & Staff Management Flow', () => {
   let orgId;
 
   beforeAll(async () => {
-    // Connect to test database if needed, but here we use the configured one
-    await User.deleteMany({ email: 'testadmin@org.com' });
+    await mongoose.connect(process.env.MONGO_URI);
+    await User.deleteMany({ email: { $in: ['testadmin@org.com', 'meredith@org.com', 'strange@org.com', 'illegal@org.com'] } });
     await Organization.deleteMany({ email: 'test@org.com' });
   });
 
@@ -38,7 +38,6 @@ describe('Organization & Staff Management Flow', () => {
   });
 
   test('2. Should reject staff creation if org is unverified', async () => {
-    // Login as admin first
     const loginRes = await request(app)
       .post('/api/auth/login')
       .send({
@@ -79,10 +78,8 @@ describe('Organization & Staff Management Flow', () => {
   });
 
   test('4. Should list only doctors from verified organizations', async () => {
-    // Verify the organization manually in DB
     await Organization.findByIdAndUpdate(orgId, { isVerified: true });
 
-    // Create a doctor now (should succeed)
     await request(app)
       .post('/api/org/users')
       .set('Authorization', `Bearer ${adminToken}`)

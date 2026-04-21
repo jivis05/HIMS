@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { appointmentAPI, userAPI, invoiceAPI, inpatientAPI, inventoryAPI } from '../services/api.service';
 import { receptionistStats } from '../data/mockData';
 import { Link } from 'react-router-dom';
+import useAutoRefresh from '../hooks/useAutoRefresh';
+import useMutation from '../hooks/useMutation';
 
 export const ReceptionistDashboard = () => {
-  const [appointments, setAppointments] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [invoices, setInvoices] = useState([]);
-  const [beds, setBeds] = useState([]);
-  const [admissions, setAdmissions] = useState([]);
-  const [inventory, setInventory] = useState([]);
   const [activeTab, setActiveTab ] = useState('overview'); // 'overview', 'billing', 'inpatient', 'inventory'
-  const [isLoading, setIsLoading] = useState(true);
 
   // Modal States
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
@@ -23,7 +18,6 @@ export const ReceptionistDashboard = () => {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedAdmission, setSelectedAdmission] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [allPatients, setAllPatients] = useState([]);
 
   // Form States
   const [newInvoice, setNewInvoice] = useState({
@@ -39,131 +33,127 @@ export const ReceptionistDashboard = () => {
   const [paymentData, setPaymentData] = useState({ amount: '', method: 'Cash' });
   const [dischargeSummary, setDischargeSummary] = useState('');
   const [restockQty, setRestockQty] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      const [apptRes, docsRes, invRes, patientsRes, bedsRes, admissionsRes, itemsRes] = await Promise.all([
-        appointmentAPI.getAll(),
-        userAPI.getDoctors(),
-        invoiceAPI.getAll(),
-        userAPI.getAll('Patient'),
-        inpatientAPI.getBeds(),
-        inpatientAPI.getAdmissions(),
-        inventoryAPI.getAll()
-      ]);
-      setAppointments(apptRes.data.appointments || []);
-      setDoctors(docsRes.data.doctors || []);
-      setInvoices(invRes.data.invoices || []);
-      setAllPatients(patientsRes.data.users || []);
-      setBeds(bedsRes.data.beds || []);
-      setAdmissions(admissionsRes.data.admissions || []);
-      setInventory(itemsRes.data.items || []);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const fetchDashboardData = async () => {
+    const [apptRes, docsRes, invRes, patientsRes, bedsRes, admissionsRes, itemsRes] = await Promise.all([
+      appointmentAPI.getAll(),
+      userAPI.getDoctors(),
+      invoiceAPI.getAll(),
+      userAPI.getAll('Patient'),
+      inpatientAPI.getBeds(),
+      inpatientAPI.getAdmissions(),
+      inventoryAPI.getAll()
+    ]);
+    return {
+      appointments: apptRes.data.appointments || [],
+      doctors: docsRes.data.doctors || [],
+      invoices: invRes.data.invoices || [],
+      allPatients: patientsRes.data.users || [],
+      beds: bedsRes.data.beds || [],
+      admissions: admissionsRes.data.admissions || [],
+      inventory: itemsRes.data.items || []
+    };
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { data, isLoading, refetch } = useAutoRefresh(fetchDashboardData);
+  const { handleMutation, isLoading: isSubmitting } = useMutation();
+
+  const appointments = data?.appointments || [];
+  const doctors = data?.doctors || [];
+  const invoices = data?.invoices || [];
+  const allPatients = data?.allPatients || [];
+  const beds = data?.beds || [];
+  const admissions = data?.admissions || [];
+  const inventory = data?.inventory || [];
 
   const handleStatusUpdate = async (id, newStatus) => {
-    try {
-      await appointmentAPI.updateStatus(id, { status: newStatus });
-      fetchData(); 
-    } catch (error) {
-      console.error('Failed to update status', error);
-      alert('Failed to update status');
-    }
+    await handleMutation(
+      () => appointmentAPI.updateStatus(id, { status: newStatus }),
+      {
+        refetch: refetch,
+        onError: () => alert('Failed to update status')
+      }
+    );
   };
 
   const handleCreateInvoice = async (e) => {
     e.preventDefault();
-    try {
-      setIsSubmitting(true);
-      await invoiceAPI.create(newInvoice);
-      setShowInvoiceModal(false);
-      setNewInvoice({ patient: '', items: [{ description: '', amount: '', type: 'Consultation' }], dueDate: '' });
-      fetchData();
-      alert('Invoice created successfully!');
-    } catch (error) {
-      console.error('Failed to create invoice', error);
-      alert('Failed to create invoice');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleMutation(
+      () => invoiceAPI.create(newInvoice),
+      {
+        refetch: refetch,
+        onSuccess: () => {
+          setShowInvoiceModal(false);
+          setNewInvoice({ patient: '', items: [{ description: '', amount: '', type: 'Consultation' }], dueDate: '' });
+          alert('Invoice created successfully!');
+        },
+        onError: () => alert('Failed to create invoice')
+      }
+    );
   };
 
   const handleRecordPayment = async (e) => {
     e.preventDefault();
-    try {
-      setIsSubmitting(true);
-      await invoiceAPI.pay(selectedInvoice._id, paymentData);
-      setShowPaymentModal(false);
-      setPaymentData({ amount: '', method: 'Cash' });
-      fetchData();
-      alert('Payment recorded successfully!');
-    } catch (error) {
-      console.error('Failed to record payment', error);
-      alert('Failed to record payment');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleMutation(
+      () => invoiceAPI.pay(selectedInvoice._id, paymentData),
+      {
+        refetch: refetch,
+        onSuccess: () => {
+          setShowPaymentModal(false);
+          setPaymentData({ amount: '', method: 'Cash' });
+          alert('Payment recorded successfully!');
+        },
+        onError: () => alert('Failed to record payment')
+      }
+    );
   };
 
   const handleAdmitPatient = async (e) => {
     e.preventDefault();
-    try {
-      setIsSubmitting(true);
-      await inpatientAPI.admit(admissionData);
-      setShowAdmitModal(false);
-      setAdmissionData({ patient: '', bedId: '', reason: '', initialObservations: '' });
-      fetchData();
-      alert('Patient admitted successfully!');
-    } catch (error) {
-      console.error('Failed to admit patient', error);
-      alert('Failed to admit patient');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleMutation(
+      () => inpatientAPI.admit(admissionData),
+      {
+        refetch: refetch,
+        onSuccess: () => {
+          setShowAdmitModal(false);
+          setAdmissionData({ patient: '', bedId: '', reason: '', initialObservations: '' });
+          alert('Patient admitted successfully!');
+        },
+        onError: () => alert('Failed to admit patient')
+      }
+    );
   };
 
   const handleDischargePatient = async (e) => {
     e.preventDefault();
-    try {
-      setIsSubmitting(true);
-      await inpatientAPI.discharge(selectedAdmission._id, { dischargeSummary });
-      setShowDischargeModal(false);
-      setDischargeSummary('');
-      fetchData();
-      alert('Patient discharged successfully!');
-    } catch (error) {
-      console.error('Failed to discharge patient', error);
-      alert('Failed to discharge patient');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleMutation(
+      () => inpatientAPI.discharge(selectedAdmission._id, { dischargeSummary }),
+      {
+        refetch: refetch,
+        onSuccess: () => {
+          setShowDischargeModal(false);
+          setDischargeSummary('');
+          alert('Patient discharged successfully!');
+        },
+        onError: () => alert('Failed to discharge patient')
+      }
+    );
   };
 
   const handleRestock = async (e) => {
     e.preventDefault();
-    try {
-      setIsSubmitting(true);
-      await inventoryAPI.updateStock(selectedItem._id, { quantity: restockQty, action: 'add' });
-      setShowRestockModal(false);
-      setRestockQty('');
-      alert('Stock updated successfully!');
-      fetchData();
-    } catch (error) {
-       console.error('Failed to restock', error);
-       alert('Failed to restock');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleMutation(
+      () => inventoryAPI.updateStock(selectedItem._id, { quantity: restockQty, action: 'add' }),
+      {
+        refetch: refetch,
+        onSuccess: () => {
+          setShowRestockModal(false);
+          setRestockQty('');
+          alert('Stock updated successfully!');
+        },
+        onError: () => alert('Failed to restock')
+      }
+    );
   };
 
   const addItem = () => {
