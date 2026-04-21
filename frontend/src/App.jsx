@@ -15,6 +15,9 @@ import BloodBankDashboard from './pages/BloodBankDashboard';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import PatientEMR from './pages/PatientEMR';
 import Profile from './pages/Profile';
+import OrgRegister from './pages/OrgRegister';
+import OrgDashboard from './pages/OrgDashboard';
+import StaffManagement from './pages/StaffManagement';
 
 const DashboardLayout = () => (
   <div className="min-h-screen bg-surface flex">
@@ -42,6 +45,7 @@ function App() {
         <Route element={<AuthLayout />}>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
+          <Route path="/auth/org-register" element={<OrgRegister />} />
         </Route>
 
         {/* Protected Dashboard Routes wrapped with DashboardLayout */}
@@ -97,6 +101,16 @@ function App() {
           <Route path="/bloodbank" element={
             <ProtectedRoute allowedRoles={['Lab_Technician', 'Hospital_Admin', 'Super_Admin']}>
               <BloodBankDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/org-dashboard" element={
+            <ProtectedRoute allowedRoles={['ORG_ADMIN']}>
+              <OrgDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/org-staff" element={
+            <ProtectedRoute allowedRoles={['ORG_ADMIN']}>
+              <StaffManagement />
             </ProtectedRoute>
           } />
         </Route>

@@ -8,18 +8,40 @@ const { protect, authorize } = require('../middleware/auth.middleware');
 const { checkEMRAccess } = require('../middleware/access.middleware');
 const { logAction } = require('../utils/auditLog');
 
+const Organization = require('../models/Organization.model');
 const router = express.Router();
 
 // GET /api/users - Admin only: list all users
-// ...
-// (lines 12-40 omitted in this chunk for brevity, matching next block)
 router.get('/', protect, authorize('Hospital_Admin', 'Super_Admin'), async (req, res) => {
-// ... (rest of search logic)
+  try {
+    const users = await User.find().select('-password');
+    res.json({ success: true, users });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
-// GET /api/users/doctors - Get all doctors (accessible to anyone authenticated)
+// GET /api/users/doctors - Get all doctors from verified organizations
 router.get('/doctors', protect, async (req, res) => {
-// ...
+  try {
+    const doctors = await User.find({ role: 'Doctor' })
+      .populate({
+        path: 'organizationId',
+        match: { isVerified: true },
+        select: 'name isVerified'
+      })
+      .select('firstName lastName email specialty organizationId');
+
+    const verifiedDoctors = doctors.filter(doc => doc.organizationId !== null);
+
+    res.json({
+      success: true,
+      count: verifiedDoctors.length,
+      doctors: verifiedDoctors
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 // GET /api/users/:id/emr - Detailed Patient EMR View

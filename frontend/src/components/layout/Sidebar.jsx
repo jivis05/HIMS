@@ -24,7 +24,8 @@ export const Sidebar = () => {
     if (link.id === 'patient') return user?.role === 'Patient';
     if (link.id === 'pharmacy') return ['Super_Admin', 'Hospital_Admin', 'Pharmacist'].includes(user?.role);
     if (link.id === 'lab') return ['Super_Admin', 'Hospital_Admin', 'Lab_Technician', 'Doctor'].includes(user?.role);
-    if (link.id === 'bloodbank') return ['Super_Admin', 'Hospital_Admin', 'Lab_Technician'].includes(user?.role);
+    if (link.id === 'bloodbank') return ['Super_Admin', 'Hospital_Admin'].includes(user?.role);
+    if (link.id === 'orgadmin' || link.id === 'orgstaff') return user?.role === 'ORG_ADMIN';
     return true;
   });
 

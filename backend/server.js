@@ -22,6 +22,7 @@ const bloodBankRoutes = require('./routes/bloodbank.routes');
 const superadminRoutes = require('./routes/superadmin.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const consentRoutes = require('./routes/consent.routes');
+const orgRoutes = require('./routes/org.routes');
 
 const app = express();
 
@@ -61,6 +62,7 @@ app.use('/api/bloodbank', bloodBankRoutes);
 app.use('/api/superadmin', superadminRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/consent', consentRoutes);
+app.use('/api/org', orgRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

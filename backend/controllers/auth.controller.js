@@ -18,16 +18,32 @@ const generateToken = (userId) => {
  */
 const register = async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    let { firstName, lastName, email, password, role } = req.body;
+
+    // Only allow role = PATIENT for self-registration
+    if (role && role !== 'Patient') {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Forbidden: Only patients can self-register. Staff accounts must be created by an organization administrator.' 
+      });
+    }
+
+    // Force role to Patient even if not provided or provided correctly
+    role = 'Patient';
 
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ success: false, message: 'An account with this email already exists.' });
     }
 
-    // Always assign the Patient role on public self-registration to prevent
-    // privilege escalation. Staff accounts must be created by an admin.
-    const user = await User.create({ firstName, lastName, email, password, role: 'Patient' });
+    // Sanitize and create user
+    const user = await User.create({ 
+      firstName: firstName.trim(), 
+      lastName: lastName.trim(), 
+      email: email.toLowerCase().trim(), 
+      password, 
+      role 
+    });
     const token = generateToken(user._id);
 
     await logAction(user._id, 'REGISTER', 'Auth', `New patient account registered: ${email}`, 'Info', req.ip);

@@ -55,6 +55,8 @@ export const sidebarLinks = [
   { id: 'pharmacy', label: 'Pharmacy', icon: 'medication', path: '/pharmacy' },
   { id: 'lab', label: 'Laboratory', icon: 'science', path: '/lab' },
   { id: 'bloodbank', label: 'Blood Bank', icon: 'volunteer_activism', path: '/bloodbank' },
+  { id: 'orgadmin', label: 'Org Dashboard', icon: 'corporate_fare', path: '/org-dashboard' },
+  { id: 'orgstaff', label: 'Staff Management', icon: 'groups', path: '/org-staff' },
 ];
 
 export const receptionistStats = [

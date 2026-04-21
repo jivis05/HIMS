@@ -17,9 +17,19 @@ const protect = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id).select('-password');
+    
     if (!req.user) {
       return res.status(401).json({ success: false, message: 'User not found.' });
     }
+
+    if (!req.user.isApproved) {
+      return res.status(403).json({ success: false, message: 'Your account is pending approval.' });
+    }
+
+    if (!req.user.isActive) {
+      return res.status(403).json({ success: false, message: 'Account deactivated.' });
+    }
+
     next();
   } catch (error) {
     return res.status(401).json({ success: false, message: 'Not authorized, token is invalid.' });
@@ -28,7 +38,6 @@ const protect = async (req, res, next) => {
 
 /**
  * Middleware to restrict access to specific roles.
- * @param  {...string} roles - One or more allowed roles.
  */
 const authorize = (...roles) => {
   return (req, res, next) => {
@@ -42,4 +51,21 @@ const authorize = (...roles) => {
   };
 };
 
-module.exports = { protect, authorize };
+/**
+ * Middleware to ensure user belongs to the requested organization.
+ */
+const checkOrgAccess = (req, res, next) => {
+  const resourceOrgId = req.params.orgId || req.body.organizationId || req.query.organizationId;
+  
+  if (req.user.role === 'Super_Admin') return next();
+
+  if (!req.user.organizationId || req.user.organizationId.toString() !== resourceOrgId) {
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Access denied: You do not belong to this organization.' 
+    });
+  }
+  next();
+};
+
+module.exports = { protect, authorize, checkOrgAccess };

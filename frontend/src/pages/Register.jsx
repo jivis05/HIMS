@@ -74,16 +74,10 @@ export const Register = () => {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-600 font-semibold mb-2">Role / Affiliation</label>
-            <select name="role" value={formData.role} onChange={handleInputChange}
-              className="w-full px-4 py-3 border-none bg-surface-container-low rounded-lg focus:ring-2 focus:ring-primary focus:bg-white text-gray-900 transition-all outline-none appearance-none cursor-pointer">
-              <option value="Patient">Patient</option>
-              <option value="Doctor">Doctor</option>
-              <option value="Nurse">Nurse</option>
-              <option value="Receptionist">Receptionist</option>
-              <option value="Pharmacist">Pharmacist</option>
-              <option value="Lab_Technician">Lab Technician</option>
-            </select>
+            <p className="text-sm text-gray-500 mb-2">Registering as a **Patient**.</p>
+            <p className="text-xs text-gray-400 italic">
+              Organization administrators (Hospitals, Clinics, etc.) should register through the <Link to="/auth/org-register" className="text-primary hover:underline font-semibold">Organization Portal</Link>.
+            </p>
           </div>
 
           <div>

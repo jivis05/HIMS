@@ -9,8 +9,25 @@ const userSchema = new mongoose.Schema(
     password:  { type: String, required: true, minlength: 6, select: false },
     role: {
       type: String,
-      enum: ['Patient', 'Doctor', 'Nurse', 'Receptionist', 'Pharmacist', 'Lab_Technician', 'Blood_Bank_Staff', 'Hospital_Admin', 'Super_Admin'],
+      enum: ['Patient', 'Doctor', 'Nurse', 'Receptionist', 'Pharmacist', 'Lab_Technician', 'Blood_Bank_Staff', 'Hospital_Admin', 'Super_Admin', 'ORG_ADMIN'],
       default: 'Patient'
+    },
+    organizationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Organization',
+      required: function() {
+        return this.role !== 'Patient' && this.role !== 'Super_Admin';
+      }
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    isApproved: {
+      type: Boolean,
+      default: function() {
+        return this.role === 'Patient';
+      }
     },
     phone:       { type: String, trim: true },
     dateOfBirth: { type: Date },
@@ -29,7 +46,7 @@ const userSchema = new mongoose.Schema(
     degree:       { type: String },
     experience:   { type: Number }, // Years
     licenseNumber:{ type: String },
-    hospital:     { type: mongoose.Schema.Types.ObjectId, ref: 'Hospital' },
+    hospital:     { type: mongoose.Schema.Types.ObjectId, ref: 'Organization' }, // Updated ref
     hospitalName: { type: String }, // For Admin/Doctor reference
 
     // Patient-specific
