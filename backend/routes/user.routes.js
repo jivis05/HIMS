@@ -12,9 +12,16 @@ const router = express.Router();
 router.get('/', protect, authorize('Hospital_Admin', 'Super_Admin'), async (req, res) => {
   try {
     const { role } = req.query;
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+    const skip  = (page - 1) * limit;
+
     const query = role ? { role } : {};
-    const users = await User.find(query).select('-password').sort({ createdAt: -1 });
-    res.json({ success: true, count: users.length, users });
+    const [users, total] = await Promise.all([
+      User.find(query).select('-password').sort({ createdAt: -1 }).skip(skip).limit(limit),
+      User.countDocuments(query)
+    ]);
+    res.json({ success: true, count: users.length, total, page, pages: Math.ceil(total / limit), users });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -74,6 +81,10 @@ router.get('/:id', protect, async (req, res) => {
 // PUT /api/users/:id - Update own profile
 router.put('/:id', protect, async (req, res) => {
   try {
+    // Authorization: only the account owner or an admin may update the profile
+    if (req.user.id !== req.params.id && !['Hospital_Admin', 'Super_Admin'].includes(req.user.role)) {
+      return res.status(403).json({ success: false, message: 'Not authorized to update this account.' });
+    }
     const { password, role, ...updateData } = req.body; // Prevent sensitive field updates
     const user = await User.findByIdAndUpdate(req.params.id, updateData, {
       new: true, runValidators: true

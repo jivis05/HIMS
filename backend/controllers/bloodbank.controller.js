@@ -48,12 +48,17 @@ const getDonors = async (req, res) => {
 const addDonor = async (req, res) => {
   try {
     const { name, bloodGroup, phone, email, units } = req.body;
-    const donor = await BloodDonor.create({ name, bloodGroup, phone, email, lastDonationDate: new Date() });
+    const donationUnits = Number(units || 1);
+    const donor = await BloodDonor.create({
+      name, bloodGroup, phone, email,
+      lastDonationDate: new Date(),
+      donations: [{ date: new Date(), units: donationUnits }]
+    });
     
     // Also update blood stock
     const stock = await BloodStock.findOne({ bloodGroup });
     if (stock) {
-      stock.units += Number(units || 1);
+      stock.units += donationUnits;
       await stock.save();
     }
 

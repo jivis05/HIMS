@@ -29,7 +29,7 @@ export const LabTechnicianDashboard = () => {
   }, []);
 
   const handleUploadClick = (report) => {
-    if (report.status !== 'Pending') {
+    if (report.status !== 'Awaiting_Sample' && report.status !== 'In_Progress') {
       alert('This report is already completed.');
       return;
     }
@@ -60,7 +60,7 @@ export const LabTechnicianDashboard = () => {
     }
   };
 
-  const pendingSamples = labReports.filter(r => r.status === 'Pending');
+  const pendingSamples = labReports.filter(r => r.status === 'Awaiting_Sample' || r.status === 'In_Progress');
   const recentResults = labReports.filter(r => r.status === 'Completed').slice(0, 5); // top 5 recent
 
   return (

@@ -157,7 +157,7 @@ export const PatientDashboard = () => {
                 <div key={rx._id} className="p-4 rounded-md border border-gray-100 hover:border-primary-container transition-colors flex flex-col justify-between">
                   <div className="mb-2">
                     <h4 className="font-semibold text-gray-900 line-clamp-1">{rx.medications[0]?.name || 'Medication'}</h4>
-                    <p className="text-sm text-gray-500 line-clamp-2">{rx.instructions}</p>
+                    <p className="text-sm text-gray-500 line-clamp-2">{rx.medications[0]?.notes || rx.notes}</p>
                   </div>
                   <div className="flex justify-between items-center mt-2">
                     <span className="text-xs font-medium text-gray-400">{new Date(rx.createdAt).toLocaleDateString()}</span>

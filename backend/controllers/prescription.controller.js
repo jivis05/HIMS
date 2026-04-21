@@ -1,5 +1,6 @@
 const Prescription = require('../models/Prescription.model');
 const Inventory = require('../models/Inventory');
+const { logAction } = require('../utils/auditLog');
 
 /**
  * @route   GET /api/prescriptions
@@ -71,6 +72,12 @@ const dispensePrescription = async (req, res) => {
     prescription.dispensedBy = req.user._id;
     prescription.dispensedAt = new Date();
     await prescription.save();
+
+    await logAction(
+      req.user._id, 'DISPENSE', 'Prescription',
+      `Prescription ${req.params.id} dispensed by pharmacist ${req.user._id}`,
+      'Info', req.ip
+    );
 
     res.status(200).json({ success: true, prescription });
   } catch (error) {

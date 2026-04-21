@@ -2,7 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
+
+const logger = require('./utils/logger');
 
 // Route imports
 const authRoutes = require('./routes/auth.routes');
@@ -20,13 +24,30 @@ const analyticsRoutes = require('./routes/analytics.routes');
 
 const app = express();
 
-// Middleware
-app.use(cors({ origin: 'http://localhost:5173' }));
+// Security headers
+app.use(helmet());
+
+// CORS — allow the configured frontend origin (never hardcoded to localhost only)
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+
 app.use(express.json());
-app.use(morgan('dev'));
+
+// HTTP request logging via winston (replace raw morgan console.log)
+app.use(morgan('combined', {
+  stream: { write: (message) => logger.info(message.trim()) }
+}));
+
+// Rate-limit auth endpoints to prevent brute-force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many requests, please try again later.' }
+});
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
@@ -47,6 +68,7 @@ app.get('/api/health', (req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   const status = err.status || 500;
+  logger.error(err.message, { stack: err.stack });
   res.status(status).json({
     success: false,
     message: err.message || 'Internal Server Error'
@@ -59,11 +81,11 @@ const MONGO_URI = process.env.MONGO_URI;
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    console.log('✅ MongoDB connected successfully');
-    app.listen(PORT, () => console.log(`🚀 HIMS server running on http://localhost:${PORT}`));
+    logger.info('MongoDB connected successfully');
+    app.listen(PORT, () => logger.info(`HIMS server running on http://localhost:${PORT}`));
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection failed:', err.message);
+    logger.error('MongoDB connection failed', { error: err.message });
     process.exit(1);
   });
 

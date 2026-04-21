@@ -21,9 +21,9 @@ export const AdminDashboard = () => {
 
   // Form States
   const [newUser, setNewUser] = useState({ firstName: '', lastName: '', email: '', password: '', role: 'Doctor' });
-  const [newBed, setNewBed] = useState({ bedNumber: '', ward: 'General', type: 'Standard' });
-  const [newInv, setNewInv] = useState({ itemName: '', category: 'Medicine', stockQuantity: '', unit: 'pcs', threshold: 5 });
-  const [newShift, setNewShift] = useState({ staff: '', startTime: '', endTime: '', type: 'Day', department: 'General' });
+  const [newBed, setNewBed] = useState({ bedNumber: '', ward: 'General', type: 'General' });
+  const [newInv, setNewInv] = useState({ itemName: '', category: 'Pharmacy', stockQuantity: '', unit: 'pcs', threshold: 5 });
+  const [newShift, setNewShift] = useState({ staff: '', startTime: '', endTime: '', type: 'Morning', department: 'General' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchData = async () => {
@@ -73,7 +73,7 @@ export const AdminDashboard = () => {
       setIsSubmitting(true);
       await bedAPI.create(newBed);
       setShowBedModal(false);
-      setNewBed({ bedNumber: '', ward: 'General', type: 'Standard' });
+      setNewBed({ bedNumber: '', ward: 'General', type: 'General' });
       fetchData();
     } catch (err) {
       alert('Failed to add bed');
@@ -88,7 +88,7 @@ export const AdminDashboard = () => {
       setIsSubmitting(true);
       await inventoryAPI.create(newInv);
       setShowInvModal(false);
-       setNewInv({ itemName: '', category: 'Medicine', stockQuantity: '', unit: 'pcs', threshold: 5 });
+       setNewInv({ itemName: '', category: 'Pharmacy', stockQuantity: '', unit: 'pcs', threshold: 5 });
        fetchData();
     } catch (err) {
        alert('Failed to add inventory');
@@ -103,7 +103,7 @@ export const AdminDashboard = () => {
        setIsSubmitting(true);
        await shiftAPI.create(newShift);
        setShowShiftModal(false);
-       setNewShift({ staff: '', startTime: '', endTime: '', type: 'Day', department: 'General' });
+       setNewShift({ staff: '', startTime: '', endTime: '', type: 'Morning', department: 'General' });
        fetchData();
     } catch (err) {
        alert('Failed to schedule shift');
