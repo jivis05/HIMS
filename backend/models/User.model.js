@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema(
       name:  String,
       phone: String,
     },
+    primaryPhysician: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     
     bio: { type: String, maxlength: 500 },
 

@@ -99,7 +99,7 @@ export const userAPI = {
   getAll:     (role)     => API.get(`/users${role ? `?role=${role}` : ''}`),
   getDoctors: ()         => API.get('/users/doctors'),
   getById:    (id)       => API.get(`/users/${id}`),
-  getEMR:     (id)       => API.get(`/users/${id}/emr`),
+  getEMR:     (id, params) => API.get(`/users/${id}/emr`, { params }),
   update:     (id, data) => API.put(`/users/${id}`, data),
   delete:     (id)       => API.delete(`/users/${id}`)
 };

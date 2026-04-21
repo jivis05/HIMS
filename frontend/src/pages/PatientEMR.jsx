@@ -7,24 +7,105 @@ export const PatientEMR = () => {
   const navigate = useNavigate();
   const [emrData, setEmrData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeHistoryTab, setActiveHistoryTab] = useState('timeline'); // 'timeline', 'labs', 'meds', 'admissions'
 
+  // Break-Glass State
+  const [showBreakGlassModal, setShowBreakGlassModal] = useState(false);
+  const [breakGlassReason, setBreakGlassReason] = useState('');
+  const [isEmergencyLoading, setIsEmergencyLoading] = useState(false);
+
+  const fetchEMR = async (params = {}) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const res = await userAPI.getEMR(id, params);
+      setEmrData(res.data.emr);
+      setShowBreakGlassModal(false);
+    } catch (err) {
+      console.error('Error fetching EMR', err);
+      setError(err.response?.data?.message || 'Access Denied');
+    } finally {
+      setIsLoading(false);
+      setIsEmergencyLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchEMR = async () => {
-      try {
-        setIsLoading(true);
-        const res = await userAPI.getEMR(id);
-        setEmrData(res.data.emr);
-      } catch (error) {
-        console.error('Error fetching EMR', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchEMR();
   }, [id]);
 
+  const handleBreakGlass = (e) => {
+    e.preventDefault();
+    setIsEmergencyLoading(true);
+    fetchEMR({ isEmergency: true, reason: breakGlassReason });
+  };
+
   if (isLoading) return <div className="p-20 text-center text-primary font-bold animate-pulse italic">Retrieving Clinical Archive...</div>;
+
+  if (error) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center p-8">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-ambient p-8 text-center space-y-6 border border-red-50">
+          <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+             <span className="material-symbols-outlined text-red-500 text-4xl">lock_person</span>
+          </div>
+          <h2 className="text-2xl font-display font-black text-slate-800">Access Restricted</h2>
+          <p className="text-slate-500 text-sm">{error}</p>
+          
+          <div className="pt-4 space-y-3">
+             <button 
+               onClick={() => setShowBreakGlassModal(true)}
+               className="w-full btn-primary bg-red-600 hover:bg-red-700 flex items-center justify-center gap-2"
+             >
+               <span className="material-symbols-outlined">bolt</span>
+               Emergency Break-Glass
+             </button>
+             <button onClick={() => navigate(-1)} className="w-full btn-secondary">Go Back</button>
+          </div>
+          <p className="text-[10px] text-gray-400 italic">This access attempt will be logged and reviewed by the medical audit committee.</p>
+        </div>
+
+        {/* Break-Glass Reason Modal */}
+        {showBreakGlassModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden text-slate-800 animate-in fade-in zoom-in duration-300">
+              <div className="bg-red-600 px-6 py-4 flex justify-between items-center text-white">
+                <h3 className="font-bold text-lg font-display flex items-center gap-2">
+                  <span className="material-symbols-outlined">warning</span>
+                  Emergency Justification
+                </h3>
+                <button onClick={() => setShowBreakGlassModal(false)} className="hover:opacity-70 transition-opacity">
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+              <form onSubmit={handleBreakGlass} className="p-6 space-y-4">
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  You are invoking **Emergency Break-Glass** access. This will bypass normal consent protocols. Please provide a brief clinical justification for this audit.
+                </p>
+                <textarea 
+                   required
+                   minLength={10}
+                   value={breakGlassReason}
+                   onChange={(e) => setBreakGlassReason(e.target.value)}
+                   className="w-full input-field h-24 pt-3 resize-none border-red-100" 
+                   placeholder="e.g. Unconscious patient in trauma bay, immediate history required for life-saving surgery..."
+                />
+                <button 
+                  type="submit" 
+                  disabled={isEmergencyLoading}
+                  className="w-full btn-primary bg-red-600 hover:bg-red-700 disabled:opacity-50"
+                >
+                  {isEmergencyLoading ? 'Accessing...' : 'Confirm Emergency Access'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (!emrData) return <div className="p-20 text-center text-gray-400">Patient records not found.</div>;
 
   const { profile, appointments, prescriptions, labReports, admissions } = emrData;
@@ -132,6 +213,10 @@ export const PatientEMR = () => {
                              event.eventType === 'Lab Report' ? 'Result: ' + (event.results || 'Pending') : 
                              'Ward: ' + (event.bed?.ward || '--')}
                          </p>
+                         <div className="mt-2 flex items-center gap-1.5 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
+                            <span className="material-symbols-outlined text-[12px] text-primary">location_on</span>
+                            <span className="text-[9px] font-black uppercase tracking-tighter text-slate-500">{event.hospital?.name || 'Local Facility'}</span>
+                         </div>
                       </div>
                    </div>
                  ))}

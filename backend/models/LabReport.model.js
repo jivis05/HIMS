@@ -4,6 +4,7 @@ const labReportSchema = new mongoose.Schema(
   {
     patient:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     orderedBy:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },  // Doctor
+    hospital:    { type: mongoose.Schema.Types.ObjectId, ref: 'Hospital' },
     processedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  // Lab tech
 
     testType:   { type: String, required: true },  // e.g. "Lipid Panel", "CBC"
