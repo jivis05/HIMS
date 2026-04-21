@@ -23,6 +23,7 @@ const superadminRoutes = require('./routes/superadmin.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
 const consentRoutes = require('./routes/consent.routes');
 const orgRoutes = require('./routes/org.routes');
+const labRoutes = require('./routes/lab.routes');
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/lab-reports', labReportRoutes);
+app.use('/api/lab', labRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/inpatient', bedRoutes);
 app.use('/api/inventory', inventoryRoutes);

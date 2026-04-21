@@ -59,6 +59,8 @@ export const superAdminAPI = {
   getLogs:  () => API.get('/superadmin/logs'),
   getStats: () => API.get('/superadmin/stats'),
   getOrgs:  () => API.get('/superadmin/orgs'),
+  getUsers: () => API.get('/superadmin/users'),
+  getAppointments: () => API.get('/superadmin/appointments'),
   verifyOrg: (id) => API.patch(`/superadmin/orgs/${id}/verify`),
   rejectOrg: (id) => API.patch(`/superadmin/orgs/${id}/reject`),
 };
@@ -73,6 +75,16 @@ export const appointmentAPI = {
   getAll:       ()           => API.get('/appointments'),
   create:       (data)       => API.post('/appointments', data),
   updateStatus: (id, data)   => API.patch(`/appointments/${id}/status`, data),
+  cancel:       (id, data)   => API.patch(`/appointments/${id}/cancel`, data),
+};
+
+// ── Lab Appointment Endpoints ────────────────────────────────────────────────
+export const labAPI = {
+  book:             (data)     => API.post('/lab/book', data),
+  getMyAppointments:(data)     => API.get('/lab/my-appointments', { params: data }),
+  getOrgAppointments:(data)    => API.get('/lab/org-appointments', { params: data }),
+  updateStatus:     (id, data) => API.patch(`/lab/${id}/status`, data),
+  cancel:           (id, data) => API.patch(`/lab/${id}/cancel`, data),
 };
 
 // ── Inventory Endpoints ──────────────────────────────────────────────────────

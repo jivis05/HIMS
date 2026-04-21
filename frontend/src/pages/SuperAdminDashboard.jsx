@@ -80,16 +80,16 @@ export const SuperAdminDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
          <div className="clinical-card p-6 bg-slate-900 text-white border-none shadow-2xl hover:translate-y-[-4px] transition-all duration-300">
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Revenue</p>
-            <h3 className="text-3xl font-display font-black mt-2">${stats?.totalRevenue?.toLocaleString()}</h3>
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Users</p>
+            <h3 className="text-3xl font-display font-black mt-2">{stats?.activePatients + stats?.doctorsOnStaff}</h3>
             <div className="mt-4 flex items-center gap-2 text-[10px] text-accent-emerald font-bold">
-               <span className="material-symbols-outlined text-sm">trending_up</span> +8.2% Growth
+               <span className="material-symbols-outlined text-sm">group</span> Global Directory
             </div>
          </div>
          <div className="clinical-card p-6 border-l-4 border-l-primary hover:shadow-xl transition-all">
-            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Active Nodes</p>
-            <h3 className="text-3xl font-display font-black text-slate-800 mt-2">{stats?.activePatients + stats?.doctorsOnStaff}</h3>
-            <p className="text-[10px] text-gray-400 mt-4 font-bold uppercase tracking-tighter">Users across modules</p>
+            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Appointments</p>
+            <h3 className="text-3xl font-display font-black text-slate-800 mt-2">{stats?.totalAppointments || 0}</h3>
+            <p className="text-[10px] text-gray-400 mt-4 font-bold uppercase tracking-tighter">Doctor + Lab Tests</p>
          </div>
          <div className="clinical-card p-6 border-l-4 border-l-accent-indigo hover:shadow-xl transition-all">
             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Organizations</p>
@@ -108,7 +108,7 @@ export const SuperAdminDashboard = () => {
       </div>
 
       <div className="flex items-center gap-8 border-b border-gray-100">
-        {['overview', 'orgs', 'users', 'logs'].map(tab => (
+        {['overview', 'users', 'orgs', 'logs'].map(tab => (
           <button 
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -140,6 +140,40 @@ export const SuperAdminDashboard = () => {
               </h3>
               <AnalyticsChart data={analytics?.appointmentVolume} color="#6366f1" />
            </div>
+        </div>
+      )}
+
+      {activeTab === 'users' && (
+        <div className="clinical-card p-0 overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
+           <div className="p-6 border-b border-gray-50 bg-surface/30">
+              <h3 className="font-bold text-slate-900">Global User Directory</h3>
+              <p className="text-xs text-gray-500">All registered users across all organizations.</p>
+           </div>
+           <table className="w-full text-left text-sm">
+             <thead className="bg-surface text-gray-500 text-xs uppercase tracking-widest">
+               <tr>
+                 <th className="p-4 font-bold">User</th>
+                 <th className="p-4 font-bold">Role</th>
+                 <th className="p-4 font-bold">Organization</th>
+                 <th className="p-4 font-bold">Status</th>
+               </tr>
+             </thead>
+             <tbody className="divide-y divide-gray-50">
+               {users.map(user => (
+                 <tr key={user._id} className="hover:bg-primary/5 transition-colors">
+                   <td className="p-4">
+                     <div className="font-bold text-slate-800">{user.firstName} {user.lastName}</div>
+                     <div className="text-xs text-gray-400">{user.email}</div>
+                   </td>
+                   <td className="p-4 font-bold text-slate-600">{user.role}</td>
+                   <td className="p-4 text-xs font-bold text-primary">{user.organizationId?.name || 'Global'}</td>
+                   <td className="p-4">
+                     {user.isActive ? <span className="text-xs text-accent-emerald font-black uppercase">Active</span> : <span className="text-xs text-red-500 font-black uppercase">Inactive</span>}
+                   </td>
+                 </tr>
+               ))}
+             </tbody>
+           </table>
         </div>
       )}
 

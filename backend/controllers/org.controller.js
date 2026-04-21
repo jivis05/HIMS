@@ -103,7 +103,7 @@ const createStaff = async (req, res) => {
     }
 
     // 3. Prevent creating Patients or other high-level roles
-    const allowedRoles = ['DOCTOR', 'NURSE', 'RECEPTIONIST', 'PHARMACIST', 'LAB_TECHNICIAN'];
+    const allowedRoles = ['DOCTOR', 'NURSE', 'RECEPTIONIST', 'PHARMACIST', 'LAB_TECH'];
     if (!allowedRoles.includes(role)) {
       return res.status(400).json({ success: false, message: 'Invalid role for staff creation.' });
     }
@@ -184,11 +184,12 @@ const updateOrgProfile = async (req, res) => {
 /**
  * @route   GET /api/org/staff
  * @desc    Get all staff for the organization
- * @access  Protected (ORG_ADMIN)
+ * @access  Protected
  */
 const getOrgStaff = async (req, res) => {
   try {
-    const staff = await User.find({ organizationId: req.user.organizationId })
+    const query = req.user.role === 'SUPER_ADMIN' ? {} : { organizationId: req.orgScope };
+    const staff = await User.find(query)
       .select('-password')
       .sort({ createdAt: -1 });
     res.status(200).json({ success: true, staff });

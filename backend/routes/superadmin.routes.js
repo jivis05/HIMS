@@ -4,13 +4,15 @@ const {
   getLogs, 
   getSystemStats, 
   getAllOrganizations, 
+  getAllUsers,
+  getAllAppointments,
   verifyOrganization, 
   rejectOrganization 
 } = require('../controllers/superadmin.controller');
-const { protect, authorize } = require('../middleware/auth.middleware');
+const { protect, requireRole } = require('../middleware/auth.middleware');
 
 router.use(protect);
-router.use(authorize('SUPER_ADMIN'));
+router.use(requireRole(['SUPER_ADMIN']));
 
 router.get('/logs', getLogs);
 router.get('/stats', getSystemStats);
@@ -19,5 +21,9 @@ router.get('/stats', getSystemStats);
 router.get('/orgs', getAllOrganizations);
 router.patch('/orgs/:id/verify', verifyOrganization);
 router.patch('/orgs/:id/reject', rejectOrganization);
+
+// Global Access
+router.get('/users', getAllUsers);
+router.get('/appointments', getAllAppointments);
 
 module.exports = router;

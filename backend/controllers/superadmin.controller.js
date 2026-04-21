@@ -24,13 +24,14 @@ const getLogs = async (req, res) => {
  */
 const getSystemStats = async (req, res) => {
   try {
-    const [userCount, doctorCount, totalRevenue, orgCount] = await Promise.all([
+    const Appointment = require('../models/Appointment.model');
+    const LabAppointment = require('../models/LabAppointment.model');
+    
+    const [userCount, doctorCount, doctorAppts, labAppts, orgCount] = await Promise.all([
       User.countDocuments({ role: 'PATIENT' }),
       User.countDocuments({ role: 'DOCTOR' }),
-      Invoice.aggregate([
-        { $match: { status: 'Paid' } },
-        { $group: { _id: null, total: { $sum: '$totalAmount' } } }
-      ]),
+      Appointment.countDocuments(),
+      LabAppointment.countDocuments(),
       Organization.countDocuments()
     ]);
 
@@ -39,7 +40,7 @@ const getSystemStats = async (req, res) => {
       stats: {
         activePatients: userCount,
         doctorsOnStaff: doctorCount,
-        totalRevenue: totalRevenue[0]?.total || 0,
+        totalAppointments: doctorAppts + labAppts,
         totalOrganizations: orgCount,
         systemHealth: 'Optimal'
       }
@@ -58,6 +59,51 @@ const getAllOrganizations = async (req, res) => {
       .populate('admin', 'firstName lastName email')
       .sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: orgs.length, organizations: orgs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @desc List all users globally
+ */
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+      .select('-password')
+      .populate('organizationId', 'name')
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: users.length, users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @desc List all appointments globally (Doctor + Lab)
+ */
+const getAllAppointments = async (req, res) => {
+  try {
+    const Appointment = require('../models/Appointment.model');
+    const LabAppointment = require('../models/LabAppointment.model');
+    
+    const [doctorAppointments, labAppointments] = await Promise.all([
+      Appointment.find()
+        .populate('patient', 'firstName lastName')
+        .populate('doctor', 'firstName lastName')
+        .populate('organizationId', 'name')
+        .sort({ date: -1 }),
+      LabAppointment.find()
+        .populate('patientId', 'firstName lastName')
+        .populate('organizationId', 'name')
+        .sort({ date: -1 })
+    ]);
+    
+    res.status(200).json({ 
+      success: true, 
+      appointments: doctorAppointments,
+      labAppointments: labAppointments
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -112,7 +158,9 @@ const rejectOrganization = async (req, res) => {
 module.exports = { 
   getLogs, 
   getSystemStats, 
-  getAllOrganizations, 
+  getAllOrganizations,
+  getAllUsers,
+  getAllAppointments,
   verifyOrganization, 
   rejectOrganization 
 };

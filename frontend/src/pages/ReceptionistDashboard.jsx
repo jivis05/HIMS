@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { appointmentAPI, userAPI, invoiceAPI, inpatientAPI, inventoryAPI } from '../services/api.service';
+import { appointmentAPI, userAPI, invoiceAPI, inpatientAPI, inventoryAPI, labAPI } from '../services/api.service';
 import { receptionistStats } from '../data/mockData';
 import { Link } from 'react-router-dom';
 import useAutoRefresh from '../hooks/useAutoRefresh';
 import useMutation from '../hooks/useMutation';
 
 export const ReceptionistDashboard = () => {
-  const [activeTab, setActiveTab ] = useState('overview'); // 'overview', 'billing', 'inpatient', 'inventory'
+  const [activeTab, setActiveTab ] = useState('overview'); // 'overview', 'billing', 'inpatient', 'inventory', 'lab'
 
   // Modal States
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
@@ -35,14 +35,15 @@ export const ReceptionistDashboard = () => {
   const [restockQty, setRestockQty] = useState('');
 
   const fetchDashboardData = async () => {
-    const [apptRes, docsRes, invRes, patientsRes, bedsRes, admissionsRes, itemsRes] = await Promise.all([
+    const [apptRes, docsRes, invRes, patientsRes, bedsRes, admissionsRes, itemsRes, labRes] = await Promise.all([
       appointmentAPI.getAll(),
       userAPI.getDoctors(),
       invoiceAPI.getAll(),
       userAPI.getAll('Patient'),
       inpatientAPI.getBeds(),
       inpatientAPI.getAdmissions(),
-      inventoryAPI.getAll()
+      inventoryAPI.getAll(),
+      labAPI.getOrgAppointments()
     ]);
     return {
       appointments: apptRes.data.appointments || [],
@@ -51,7 +52,8 @@ export const ReceptionistDashboard = () => {
       allPatients: patientsRes.data.users || [],
       beds: bedsRes.data.beds || [],
       admissions: admissionsRes.data.admissions || [],
-      inventory: itemsRes.data.items || []
+      inventory: itemsRes.data.items || [],
+      labAppointments: labRes.data.labAppointments || []
     };
   };
 
@@ -65,6 +67,7 @@ export const ReceptionistDashboard = () => {
   const beds = data?.beds || [];
   const admissions = data?.admissions || [];
   const inventory = data?.inventory || [];
+  const labAppointments = data?.labAppointments || [];
 
   const handleStatusUpdate = async (id, newStatus) => {
     await handleMutation(
@@ -207,6 +210,12 @@ export const ReceptionistDashboard = () => {
           className={`pb-3 px-1 text-sm font-bold transition-all ${activeTab === 'inventory' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-gray-600'}`}
         >
           Pharmacy & Inventory
+        </button>
+        <button 
+          onClick={() => setActiveTab('lab')}
+          className={`pb-3 px-1 text-sm font-bold transition-all ${activeTab === 'lab' ? 'text-primary border-b-2 border-primary' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          Lab & Diagnostics
         </button>
       </div>
 
@@ -454,7 +463,7 @@ export const ReceptionistDashboard = () => {
           </div>
         </div>
       ) : (
-        <div className="space-y-6">
+          <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-bold font-display text-slate-800">Pharmacy & Stock</h3>
               <p className="text-sm text-gray-400">Manage medicine stock and hospital inventories.</p>
@@ -497,8 +506,48 @@ export const ReceptionistDashboard = () => {
                   </tbody>
                </table>
             </div>
-         </div>
-      )}
+          </div>
+      ) : activeTab === 'lab' ? (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-2xl font-bold font-display text-slate-800">Lab & Diagnostics</h3>
+              <button onClick={fetchDashboardData} className="text-sm text-primary hover:text-primary-hover font-bold flex items-center gap-1">
+                 <span className="material-symbols-outlined text-sm">refresh</span> Refresh
+              </button>
+            </div>
+            <div className="clinical-card p-0 overflow-hidden">
+               <table className="w-full text-left">
+                  <thead className="bg-surface border-b">
+                     <tr className="text-xs text-gray-500 font-black uppercase">
+                        <th className="py-4 px-6">Patient</th>
+                        <th className="py-4 px-6">Test Type</th>
+                        <th className="py-4 px-6">Date/Time</th>
+                        <th className="py-4 px-6">Status</th>
+                     </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                     {labAppointments.length === 0 ? (
+                       <tr><td colSpan="4" className="py-8 text-center text-gray-500">No lab appointments found.</td></tr>
+                     ) : labAppointments.map(appt => (
+                       <tr key={appt._id} className="hover:bg-primary/5 transition-colors">
+                          <td className="py-4 px-6">
+                             <div className="font-bold text-slate-900">{appt.patientId?.firstName} {appt.patientId?.lastName}</div>
+                             <div className="text-[10px] text-gray-400 font-bold">{appt.patientId?.email}</div>
+                          </td>
+                          <td className="py-4 px-6 font-bold text-slate-700">{appt.testType}</td>
+                          <td className="py-4 px-6 text-sm text-gray-600">
+                             {new Date(appt.date).toLocaleDateString()} • {appt.timeSlot}
+                          </td>
+                          <td className="py-4 px-6">
+                             <span className={`status-pill ${getStatusColor(appt.status)}`}>{appt.status}</span>
+                          </td>
+                       </tr>
+                     ))}
+                  </tbody>
+               </table>
+            </div>
+          </div>
+      ) : null}
 
       {/* Modals */}
       {showInvoiceModal && (

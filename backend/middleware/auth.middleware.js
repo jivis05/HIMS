@@ -39,7 +39,7 @@ const protect = async (req, res, next) => {
 /**
  * Middleware to restrict access to specific roles.
  */
-const authorize = (...roles) => {
+const requireRole = (roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
@@ -49,6 +49,18 @@ const authorize = (...roles) => {
     }
     next();
   };
+};
+
+/**
+ * Middleware to enforce organization scope based on role.
+ */
+const requireOrgScope = (req, res, next) => {
+  if (req.user.role !== 'SUPER_ADMIN') {
+    req.orgScope = req.user.organizationId;
+  } else {
+    req.orgScope = null;
+  }
+  next();
 };
 
 /**
@@ -68,4 +80,4 @@ const checkOrgAccess = (req, res, next) => {
   next();
 };
 
-module.exports = { protect, authorize, checkOrgAccess };
+module.exports = { protect, requireRole, requireOrgScope, checkOrgAccess, authorize: requireRole };
