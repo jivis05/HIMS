@@ -124,12 +124,12 @@ export const PatientEMR = () => {
                          <h4 className="font-bold text-slate-800">
                             {event.eventType === 'Appointment' ? event.type : 
                              event.eventType === 'Prescription' ? 'Medication Dispensed' :
-                             event.eventType === 'Lab Report' ? event.testName : 'Hospital Admission'}
+                             event.eventType === 'Lab Report' ? event.testType : 'Hospital Admission'}
                          </h4>
                          <p className="text-xs text-gray-500 mt-1 line-clamp-2">
                             {event.eventType === 'Appointment' ? event.chiefComplaint :
                              event.eventType === 'Prescription' ? event.medications?.[0]?.name + '...' :
-                             event.eventType === 'Lab Report' ? 'Result: ' + (event.result || 'Pending') : 
+                             event.eventType === 'Lab Report' ? 'Result: ' + (event.results || 'Pending') : 
                              'Ward: ' + (event.bed?.ward || '--')}
                          </p>
                       </div>
@@ -151,9 +151,9 @@ export const PatientEMR = () => {
                      <tbody className="divide-y divide-gray-50">
                         {labReports.map(report => (
                           <tr key={report._id}>
-                             <td className="py-4 px-6 font-bold text-slate-700">{report.testName}</td>
+                             <td className="py-4 px-6 font-bold text-slate-700">{report.testType}</td>
                              <td className="py-4 px-6 text-xs text-gray-500">{new Date(report.createdAt).toLocaleDateString()}</td>
-                             <td className="py-4 px-6 text-xs font-medium text-slate-600 truncate max-w-[150px]">{report.result || '--'}</td>
+                             <td className="py-4 px-6 text-xs font-medium text-slate-600 truncate max-w-[150px]">{report.results || '--'}</td>
                              <td className="py-4 px-6">
                                 <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded ${report.status === 'Completed' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
                                    {report.status}

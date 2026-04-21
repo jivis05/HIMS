@@ -12,7 +12,7 @@ const labReportSchema = new mongoose.Schema(
 
     priority: {
       type: String,
-      enum: ['Normal', 'Urgent', 'STAT'],
+      enum: ['Normal', 'Routine', 'Urgent', 'STAT'],
       default: 'Normal'
     },
     status: {

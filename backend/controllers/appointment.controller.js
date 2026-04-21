@@ -14,12 +14,21 @@ const getAppointments = async (req, res) => {
     else if (role === 'Doctor') query.doctor = _id;
     // Admin, Receptionist see all
 
-    const appointments = await Appointment.find(query)
-      .populate('patient', 'firstName lastName email phone')
-      .populate('doctor', 'firstName lastName specialty')
-      .sort({ date: -1 });
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+    const skip  = (page - 1) * limit;
 
-    res.status(200).json({ success: true, count: appointments.length, appointments });
+    const [appointments, total] = await Promise.all([
+      Appointment.find(query)
+        .populate('patient', 'firstName lastName email phone')
+        .populate('doctor', 'firstName lastName specialty')
+        .sort({ date: -1 })
+        .skip(skip)
+        .limit(limit),
+      Appointment.countDocuments(query)
+    ]);
+
+    res.status(200).json({ success: true, count: appointments.length, total, page, pages: Math.ceil(total / limit), appointments });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

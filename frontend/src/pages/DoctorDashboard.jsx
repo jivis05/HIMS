@@ -15,8 +15,7 @@ export const DoctorDashboard = () => {
   // Prescription Form State
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [medication, setMedication] = useState('');
-  const [instructions, setInstructions] = useState('');
+  const [medications, setMedications] = useState([{ name: '', dosage: '', frequency: 'Daily', duration: '', notes: '' }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Lab Order Form State
@@ -69,14 +68,18 @@ export const DoctorDashboard = () => {
       await prescriptionAPI.create({
         patient: selectedAppointment.patient._id,
         appointment: selectedAppointment._id,
-        medications: [{ name: medication, dosage: 'As prescribed', frequency: 'Daily' }],
-        instructions: instructions
+        medications: medications.map(m => ({
+          name: m.name,
+          dosage: m.dosage || 'As prescribed',
+          frequency: m.frequency || 'Daily',
+          duration: m.duration,
+          notes: m.notes
+        }))
       });
       await appointmentAPI.updateStatus(selectedAppointment._id, { status: 'Completed' });
       
       setShowModal(false);
-      setMedication('');
-      setInstructions('');
+      setMedications([{ name: '', dosage: '', frequency: 'Daily', duration: '', notes: '' }]);
       fetchData();
       alert('Prescription created successfully!');
     } catch (error) {
@@ -308,7 +311,7 @@ export const DoctorDashboard = () => {
                 <span className="material-symbols-outlined text-primary">edit_document</span>
                 Write Prescription
               </h3>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+              <button onClick={() => { setShowModal(false); setMedications([{ name: '', dosage: '', frequency: 'Daily', duration: '', notes: '' }]); }} className="text-slate-400 hover:text-slate-600 transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -319,28 +322,86 @@ export const DoctorDashboard = () => {
                 <p><span className="font-semibold text-slate-700">Complaint:</span> {selectedAppointment.chiefComplaint}</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Medication & Dosage</label>
-                <input 
-                  type="text" 
-                  value={medication}
-                  onChange={(e) => setMedication(e.target.value)}
-                  className="input-field" 
-                  placeholder="e.g. Amoxicillin 500mg" 
-                  required 
-                />
-              </div>
+              {medications.map((med, idx) => (
+                <div key={idx} className="border border-gray-100 rounded-lg p-4 space-y-3 relative">
+                  {medications.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setMedications(medications.filter((_, i) => i !== idx))}
+                      className="absolute top-2 right-2 text-gray-300 hover:text-red-500 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  )}
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Medication {idx + 1}</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Drug Name</label>
+                      <input
+                        type="text"
+                        value={med.name}
+                        onChange={(e) => setMedications(medications.map((m, i) => i === idx ? { ...m, name: e.target.value } : m))}
+                        className="input-field text-sm"
+                        placeholder="e.g. Amoxicillin"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Dosage</label>
+                      <input
+                        type="text"
+                        value={med.dosage}
+                        onChange={(e) => setMedications(medications.map((m, i) => i === idx ? { ...m, dosage: e.target.value } : m))}
+                        className="input-field text-sm"
+                        placeholder="e.g. 500mg"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Frequency</label>
+                      <select
+                        value={med.frequency}
+                        onChange={(e) => setMedications(medications.map((m, i) => i === idx ? { ...m, frequency: e.target.value } : m))}
+                        className="input-field text-sm"
+                      >
+                        <option>Once daily</option>
+                        <option>Twice daily</option>
+                        <option>Three times daily</option>
+                        <option>As needed</option>
+                        <option>Daily</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Duration</label>
+                      <input
+                        type="text"
+                        value={med.duration}
+                        onChange={(e) => setMedications(medications.map((m, i) => i === idx ? { ...m, duration: e.target.value } : m))}
+                        className="input-field text-sm"
+                        placeholder="e.g. 7 days"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Notes / Instructions</label>
+                    <input
+                      type="text"
+                      value={med.notes}
+                      onChange={(e) => setMedications(medications.map((m, i) => i === idx ? { ...m, notes: e.target.value } : m))}
+                      className="input-field text-sm"
+                      placeholder="e.g. Take with food"
+                    />
+                  </div>
+                </div>
+              ))}
 
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Instructions</label>
-                <textarea 
-                  value={instructions}
-                  onChange={(e) => setInstructions(e.target.value)}
-                  className="input-field min-h-[100px] pt-3" 
-                  placeholder="e.g. Take twice daily..." 
-                  required
-                ></textarea>
-              </div>
+              <button
+                type="button"
+                onClick={() => setMedications([...medications, { name: '', dosage: '', frequency: 'Daily', duration: '', notes: '' }])}
+                className="text-primary text-sm font-semibold hover:underline flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-sm">add</span> Add another medication
+              </button>
 
               <div className="pt-4 flex justify-end gap-3">
                 <button type="button" onClick={() => setShowModal(false)} className="btn-secondary">Cancel</button>

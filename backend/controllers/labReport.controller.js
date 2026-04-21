@@ -9,14 +9,23 @@ const getLabReports = async (req, res) => {
     let query = {};
     if (req.user.role === 'Patient') query.patient = req.user._id;
     else if (req.user.role === 'Doctor') query.orderedBy = req.user._id;
-    else if (req.user.role === 'Lab_Technician') query.processedBy = req.user._id;
+    // Lab_Technician and admins see all reports (pending and completed)
 
-    const reports = await LabReport.find(query)
-      .populate('patient', 'firstName lastName')
-      .populate('orderedBy', 'firstName lastName specialty')
-      .sort({ createdAt: -1 });
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+    const skip  = (page - 1) * limit;
 
-    res.status(200).json({ success: true, count: reports.length, reports });
+    const [reports, total] = await Promise.all([
+      LabReport.find(query)
+        .populate('patient', 'firstName lastName')
+        .populate('orderedBy', 'firstName lastName specialty')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      LabReport.countDocuments(query)
+    ]);
+
+    res.status(200).json({ success: true, count: reports.length, total, page, pages: Math.ceil(total / limit), labReports: reports });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

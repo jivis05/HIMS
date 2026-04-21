@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { prescriptionAPI } from '../services/api.service';
-import { inventoryAlerts } from '../data/mockData';
+import { prescriptionAPI, inventoryAPI } from '../services/api.service';
 
 export const PharmacyDashboard = () => {
   const [prescriptions, setPrescriptions] = useState([]);
+  const [lowStockItems, setLowStockItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   const fetchPrescriptions = async () => {
     try {
       setIsLoading(true);
-      const res = await prescriptionAPI.getAll();
-      setPrescriptions(res.data.prescriptions || []);
+      const [rxRes, lowStockRes] = await Promise.all([
+        prescriptionAPI.getAll(),
+        inventoryAPI.getLowStock()
+      ]);
+      setPrescriptions(rxRes.data.prescriptions || []);
+      setLowStockItems(lowStockRes.data.items || []);
     } catch (error) {
       console.error('Error fetching prescriptions:', error);
     } finally {
@@ -81,7 +85,7 @@ export const PharmacyDashboard = () => {
           <div className="clinical-card p-6 hover:-translate-y-1 transition-transform duration-300">
             <h3 className="text-sm font-medium text-gray-500">Low Stock Alerts</h3>
             <div className="mt-4 flex items-end justify-between">
-              <span className="text-4xl font-display font-extrabold text-gray-900">{inventoryAlerts.length}</span>
+              <span className="text-4xl font-display font-extrabold text-gray-900">{lowStockItems.length}</span>
               <span className="material-symbols-outlined text-accent-error bg-red-50 p-1.5 rounded-md">warning</span>
             </div>
           </div>
@@ -116,7 +120,7 @@ export const PharmacyDashboard = () => {
                     <td className="py-4 font-medium text-gray-900 px-2">{rx.patient?.firstName} {rx.patient?.lastName}</td>
                     <td className="py-4 text-gray-700 font-medium px-2">
                        <div className="font-semibold text-sm">{rx.medications[0]?.name}</div>
-                       <div className="text-xs text-gray-500">{rx.instructions}</div>
+                       <div className="text-xs text-gray-500">{rx.medications[0]?.notes || rx.notes}</div>
                     </td>
                     <td className="py-4 text-gray-500 px-2">Dr. {rx.appointment?.doctor?.lastName || 'Unknown'}</td>
                     <td className="py-4 px-2">
@@ -145,14 +149,16 @@ export const PharmacyDashboard = () => {
             Low Stock Alerts
           </h3>
           <div className="space-y-4">
-            {inventoryAlerts.map(item => (
-              <div key={item.id} className="bg-white p-4 rounded-md shadow-sm border border-red-100">
+            {lowStockItems.length === 0 ? (
+              <p className="text-sm text-gray-500 italic">No low-stock items.</p>
+            ) : lowStockItems.map(item => (
+              <div key={item._id} className="bg-white p-4 rounded-md shadow-sm border border-red-100">
                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-semibold text-gray-900">{item.name}</span>
-                    <span className="text-xs font-bold text-accent-error bg-red-50 px-2 py-0.5 rounded">{item.stock} left</span>
+                    <span className="font-semibold text-gray-900">{item.itemName}</span>
+                    <span className="text-xs font-bold text-accent-error bg-red-50 px-2 py-0.5 rounded">{item.stockQuantity} left</span>
                  </div>
                  <div className="w-full bg-surface h-1.5 rounded-full overflow-hidden mt-3">
-                    <div className="bg-accent-error h-full" style={{ width: `${(item.stock / item.total) * 100}%` }}></div>
+                    <div className="bg-accent-error h-full" style={{ width: `${Math.min(100, (item.stockQuantity / Math.max(item.threshold * 2, 1)) * 100)}%` }}></div>
                  </div>
               </div>
             ))}

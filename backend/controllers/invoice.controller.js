@@ -1,4 +1,5 @@
 const Invoice = require('../models/Invoice');
+const { logAction } = require('../utils/auditLog');
 
 // Generate a new invoice
 exports.createInvoice = async (req, res) => {
@@ -30,6 +31,10 @@ exports.createInvoice = async (req, res) => {
 exports.getInvoices = async (req, res) => {
   try {
     const { patient, status } = req.query;
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+    const skip  = (page - 1) * limit;
+
     let query = {};
     if (patient) query.patient = patient;
     if (status) query.status = status;
@@ -39,12 +44,17 @@ exports.getInvoices = async (req, res) => {
       query.patient = req.user.id;
     }
 
-    const invoices = await Invoice.find(query)
-      .populate('patient', 'firstName lastName email phoneNumber')
-      .populate('issuedBy', 'firstName lastName')
-      .sort({ createdAt: -1 });
+    const [invoices, total] = await Promise.all([
+      Invoice.find(query)
+        .populate('patient', 'firstName lastName email phoneNumber')
+        .populate('issuedBy', 'firstName lastName')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Invoice.countDocuments(query)
+    ]);
       
-    res.json({ invoices });
+    res.json({ invoices, total, page, pages: Math.ceil(total / limit) });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching invoices', error: error.message });
   }
@@ -78,6 +88,13 @@ exports.recordPayment = async (req, res) => {
     }
 
     await invoice.save();
+
+    await logAction(
+      req.user.id, 'PAYMENT', 'Invoice',
+      `Payment of ${amount} (${method}) recorded for invoice ${req.params.id}`,
+      'Info', req.ip
+    );
+
     res.json({ message: 'Payment recorded successfully', invoice });
   } catch (error) {
     res.status(500).json({ message: 'Error recording payment', error: error.message });
