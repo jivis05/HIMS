@@ -219,7 +219,7 @@ export const ReceptionistDashboard = () => {
         </button>
       </div>
 
-      {activeTab === 'overview' ? (
+      {activeTab === 'overview' && (
         <>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between clinical-card p-6">
             <div className="flex-1 w-full relative">
@@ -332,7 +332,9 @@ export const ReceptionistDashboard = () => {
             </div>
           </div>
         </>
-      ) : activeTab === 'billing' ? (
+      )}
+
+      {activeTab === 'billing' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h3 className="text-2xl font-bold font-display text-slate-800">Billing Management</h3>
@@ -386,7 +388,9 @@ export const ReceptionistDashboard = () => {
             </table>
           </div>
         </div>
-      ) : activeTab === 'inpatient' ? (
+      )}
+
+      {activeTab === 'inpatient' && (
         <div className="space-y-8">
            <div className="flex justify-between items-center">
             <h3 className="text-2xl font-bold font-display text-slate-800">Inpatient Management</h3>
@@ -462,7 +466,9 @@ export const ReceptionistDashboard = () => {
             </div>
           </div>
         </div>
-      ) : (
+      )}
+
+      {activeTab === 'inventory' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-bold font-display text-slate-800">Pharmacy & Stock</h3>
@@ -507,7 +513,9 @@ export const ReceptionistDashboard = () => {
                </table>
             </div>
           </div>
-      ) : activeTab === 'lab' ? (
+      )}
+
+      {activeTab === 'lab' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-bold font-display text-slate-800">Lab & Diagnostics</h3>
@@ -547,7 +555,7 @@ export const ReceptionistDashboard = () => {
                </table>
             </div>
           </div>
-      ) : null}
+      )}
 
       {/* Modals */}
       {showInvoiceModal && (
