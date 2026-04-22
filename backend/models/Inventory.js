@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const inventorySchema = new mongoose.Schema({
   itemName: { type: String, required: true, unique: true },
+  organizationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
   category: { 
     type: String, 
     enum: ['Pharmacy', 'Lab', 'Clinical Supplies', 'General'], 

@@ -11,9 +11,9 @@ const consentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'User' 
     },
-    hospital: { 
+    organizationId: { 
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Hospital' 
+      ref: 'Organization' 
     },
     status: {
       type: String,
@@ -30,6 +30,6 @@ const consentSchema = new mongoose.Schema(
 
 // Index for quick lookup
 consentSchema.index({ patient: 1, doctor: 1, status: 1 });
-consentSchema.index({ patient: 1, hospital: 1, status: 1 });
+consentSchema.index({ patient: 1, organizationId: 1, status: 1 });
 
 module.exports = mongoose.model('Consent', consentSchema);

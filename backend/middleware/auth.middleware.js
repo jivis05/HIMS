@@ -60,6 +60,12 @@ const requireOrgScope = (req, res, next) => {
   } else {
     req.orgScope = null;
   }
+
+  // Debug Logging (Temporary)
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[AUTH DEBUG] User: ${req.user.email} | Role: ${req.user.role} | Scope: ${req.orgScope}`);
+  }
+
   next();
 };
 

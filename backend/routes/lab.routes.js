@@ -1,27 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const {
-  bookLabTest,
-  getMyLabAppointments,
-  getOrgLabAppointments,
-  updateLabStatus,
-  cancelLabAppointment
+const { 
+  bookAppointment, 
+  getMyAppointments, 
+  getOrgAppointments, 
+  updateStatus, 
+  cancelAppointment 
 } = require('../controllers/lab.controller');
 const { protect, requireRole, requireOrgScope } = require('../middleware/auth.middleware');
 
+// Apply protection and org scope to all routes
 router.use(protect);
-
-// Shared booking route (both PATIENT and STAFF can book)
-router.post('/book', requireOrgScope, bookLabTest);
+router.use(requireOrgScope);
 
 // Patient routes
-router.get('/my-appointments', requireRole(['PATIENT']), getMyLabAppointments);
+router.post('/book', requireRole(['PATIENT', 'RECEPTIONIST', 'ORG_ADMIN', 'SUPER_ADMIN']), bookAppointment);
+router.get('/my-appointments', requireRole(['PATIENT']), getMyAppointments);
 
-// Org Staff routes
-router.get('/org-appointments', requireOrgScope, getOrgLabAppointments);
-router.patch('/:id/status', requireOrgScope, updateLabStatus);
+// Staff/Admin routes
+router.get('/org-appointments', requireRole(['LAB_TECH', 'ORG_ADMIN', 'SUPER_ADMIN']), getOrgAppointments);
+router.patch('/:id/status', requireRole(['LAB_TECH', 'ORG_ADMIN', 'SUPER_ADMIN']), updateStatus);
 
-// Cancel route (Logic internally handles PATIENT vs ORG STAFF vs SUPER_ADMIN)
-router.patch('/:id/cancel', requireOrgScope, cancelLabAppointment);
+// Cancellation (Shared)
+router.patch('/:id/cancel', cancelAppointment);
 
 module.exports = router;

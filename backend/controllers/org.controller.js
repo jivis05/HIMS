@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 const Organization = require('../models/Organization.model');
 const User = require('../models/User.model');
-const jwt = require('jsonwebtoken');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 const { logAction } = require('../utils/auditLog');
-
 
 /**
  * @route   POST /api/org/register
  * @desc    Register a new organization and its admin (Transaction Safe)
- * @access  Public
  */
 const registerOrganization = async (req, res) => {
   const session = await mongoose.startSession();
@@ -17,22 +15,20 @@ const registerOrganization = async (req, res) => {
   try {
     const { orgName, orgType, orgEmail, orgPhone, orgAddress, adminFirstName, adminLastName, adminEmail, adminPassword } = req.body;
 
-    // 1. Check if org or admin already exists
     const orgExists = await Organization.findOne({ email: orgEmail }).session(session);
     if (orgExists) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(400).json({ success: false, message: 'Organization with this email already exists.' });
+      return sendError(res, 'Organization with this email already exists.', 400);
     }
 
     const adminExists = await User.findOne({ email: adminEmail }).session(session);
     if (adminExists) {
       await session.abortTransaction();
       session.endSession();
-      return res.status(400).json({ success: false, message: 'Admin user with this email already exists.' });
+      return sendError(res, 'Admin user with this email already exists.', 400);
     }
 
-    // 2. Create Organization (isVerified = false by default)
     const organization = new Organization({
       name: orgName,
       type: orgType,
@@ -42,7 +38,6 @@ const registerOrganization = async (req, res) => {
     });
     await organization.save({ session });
 
-    // 3. Create ORG_ADMIN
     const admin = new User({
       firstName: adminFirstName,
       lastName: adminLastName,
@@ -54,7 +49,6 @@ const registerOrganization = async (req, res) => {
     });
     await admin.save({ session });
 
-    // 4. Link admin back to organization
     organization.admin = admin._id;
     await organization.save({ session });
 
@@ -63,22 +57,18 @@ const registerOrganization = async (req, res) => {
 
     await logAction(admin._id, 'ORG_REGISTER', 'Org', `Organization registered: ${orgName}`, 'Info', req.ip);
 
-    res.status(201).json({
-      success: true,
-      message: 'Organization registered successfully. Awaiting verification.',
-      organization: {
-        id: organization._id,
-        name: organization.name,
-        type: organization.type,
-        email: organization.email,
-        isVerified: organization.isVerified,
-        verificationStatus: organization.verificationStatus
-      }
-    });
+    return sendSuccess(res, {
+      id: organization._id,
+      name: organization.name,
+      type: organization.type,
+      email: organization.email,
+      isVerified: organization.isVerified,
+      verificationStatus: organization.verificationStatus
+    }, 'Organization registered successfully. Awaiting verification.', 201);
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -91,30 +81,25 @@ const createStaff = async (req, res) => {
   try {
     const { firstName, lastName, email, password, role, specialty } = req.body;
 
-    // 1. Enforce ORG_ADMIN role
-    if (req.user.role !== 'ORG_ADMIN') {
-      return res.status(403).json({ success: false, message: 'Forbidden: Only organization admins can create staff.' });
+    if (req.user.role !== 'ORG_ADMIN' && req.user.role !== 'SUPER_ADMIN') {
+      return sendError(res, 'Forbidden: Only organization admins can create staff.', 403);
     }
 
-    // 2. Check if organization is verified
-    const organization = await Organization.findById(req.user.organizationId);
-    if (!organization || !organization.isVerified) {
-      return res.status(403).json({ success: false, message: 'Forbidden: Organization must be verified to create staff.' });
+    const organization = await Organization.findById(req.user.organizationId || req.body.organizationId);
+    if (!organization || (!organization.isVerified && req.user.role !== 'SUPER_ADMIN')) {
+      return sendError(res, 'Forbidden: Organization must be verified to create staff.', 403);
     }
 
-    // 3. Prevent creating Patients or other high-level roles
-    const allowedRoles = ['DOCTOR', 'NURSE', 'RECEPTIONIST', 'PHARMACIST', 'LAB_TECH'];
+    const allowedRoles = ['DOCTOR', 'NURSE', 'RECEPTIONIST', 'LAB_TECH'];
     if (!allowedRoles.includes(role)) {
-      return res.status(400).json({ success: false, message: 'Invalid role for staff creation.' });
+      return sendError(res, 'Invalid role for staff creation. Must be one of: ' + allowedRoles.join(', '), 400);
     }
 
-    // 4. Check for existing user
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ success: false, message: 'A user with this email already exists.' });
+      return sendError(res, 'A user with this email already exists.', 400);
     }
 
-    // 5. Create Staff User
     const staff = await User.create({
       firstName,
       lastName,
@@ -122,50 +107,34 @@ const createStaff = async (req, res) => {
       password,
       role,
       specialty,
-      organizationId: req.user.organizationId,
+      organizationId: req.user.organizationId || req.body.organizationId,
       createdBy: req.user._id,
       isApproved: true
     });
 
     await logAction(req.user._id, 'CREATE_STAFF', 'Org', `Staff created: ${email} (${role})`, 'Info', req.ip);
 
-    res.status(201).json({
-      success: true,
-      message: `${role} account created successfully.`,
-      user: {
-        id: staff._id,
-        firstName: staff.firstName,
-        lastName: staff.lastName,
-        email: staff.email,
-        role: staff.role
-      }
-    });
+    return sendSuccess(res, staff, `${role} account created successfully.`, 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   GET /api/org/profile
- * @desc    Get organization profile
- * @access  Protected (ORG_ADMIN)
  */
 const getOrgProfile = async (req, res) => {
   try {
     const org = await Organization.findById(req.user.organizationId).populate('admin', 'firstName lastName email');
-    if (!org) {
-      return res.status(404).json({ success: false, message: 'Organization not found.' });
-    }
-    res.status(200).json({ success: true, organization: org });
+    if (!org) return sendError(res, 'Organization not found.', 404);
+    return sendSuccess(res, org);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   PUT /api/org/profile
- * @desc    Update organization profile
- * @access  Protected (ORG_ADMIN)
  */
 const updateOrgProfile = async (req, res) => {
   try {
@@ -175,26 +144,22 @@ const updateOrgProfile = async (req, res) => {
       { name, phone, address },
       { new: true, runValidators: true }
     );
-    res.status(200).json({ success: true, organization: org });
+    return sendSuccess(res, org, 'Organization profile updated');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   GET /api/org/staff
- * @desc    Get all staff for the organization
- * @access  Protected
  */
 const getOrgStaff = async (req, res) => {
   try {
     const query = req.user.role === 'SUPER_ADMIN' ? {} : { organizationId: req.orgScope };
-    const staff = await User.find(query)
-      .select('-password')
-      .sort({ createdAt: -1 });
-    res.status(200).json({ success: true, staff });
+    const staff = await User.find(query).select('-password').sort({ createdAt: -1 });
+    return sendSuccess(res, staff, `Found ${staff.length} staff members`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 

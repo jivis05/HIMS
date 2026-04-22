@@ -1,160 +1,177 @@
 const LabAppointment = require('../models/LabAppointment.model');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
 /**
  * @route   POST /api/lab/book
- * @desc    Book a new lab test
- * @access  Protected (PATIENT or ORG STAFF)
+ * @desc    Book a new lab appointment
+ * @access  Protected (Patient, Receptionist)
  */
-const bookLabTest = async (req, res) => {
+const bookAppointment = async (req, res) => {
   try {
-    const { testType, date, timeSlot, organizationId, patientId } = req.body;
-    const role = req.user.role;
-    
-    let targetPatientId = patientId;
-    let targetOrgId = organizationId;
+    const { patientId, organizationId, testType, date, timeSlot } = req.body;
 
-    if (role === 'PATIENT') {
-      targetPatientId = req.user._id;
-      if (!targetOrgId) {
-        return res.status(400).json({ success: false, message: 'organizationId is required.' });
-      }
-    } else if (role !== 'SUPER_ADMIN') {
-      // Staff booking
-      targetOrgId = req.orgScope;
-      if (!targetPatientId) {
-         return res.status(400).json({ success: false, message: 'patientId is required for staff booking.' });
+    // Security: Patients can only book for themselves
+    if (req.user.role === 'PATIENT' && patientId !== req.user._id.toString()) {
+      return sendError(res, 'You can only book appointments for yourself.', 403);
+    }
+
+    // Security: Org staff can only book for their organization
+    if (req.user.role !== 'SUPER_ADMIN' && organizationId !== req.user.organizationId?.toString()) {
+      // Patients might not have organizationId on their user object, but they book at an org
+      // So we allow patients to book anywhere, but staff only in their org
+      if (req.user.role !== 'PATIENT') {
+        return sendError(res, 'You can only book appointments for your organization.', 403);
       }
     }
 
-    const labAppt = await LabAppointment.create({
-      patientId: targetPatientId,
-      organizationId: targetOrgId,
+    const appointment = await LabAppointment.create({
+      patientId,
+      organizationId,
       testType,
       date,
       timeSlot,
       createdBy: req.user._id
     });
 
-    res.status(201).json({ success: true, labAppointment: labAppt });
+    return sendSuccess(res, appointment, 'Lab appointment booked successfully', 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   GET /api/lab/my-appointments
- * @desc    Get lab appointments for a patient
- * @access  Protected (PATIENT)
+ * @desc    Get current user's lab appointments
+ * @access  Protected (Patient)
  */
-const getMyLabAppointments = async (req, res) => {
+const getMyAppointments = async (req, res) => {
   try {
-    if (req.user.role !== 'PATIENT') {
-      return res.status(403).json({ success: false, message: 'Only patients can access this route.' });
-    }
+    const query = { patientId: req.user._id };
+    
+    // Allow filtering by status if needed
+    if (req.query.status) query.status = req.query.status;
 
-    const labAppts = await LabAppointment.find({ patientId: req.user._id })
-      .populate('organizationId', 'name')
-      .populate('labTechnicianId', 'firstName lastName')
-      .sort({ date: -1 });
+    const appointments = await LabAppointment.find(query)
+      .populate('organizationId', 'name address')
+      .sort({ date: -1, timeSlot: -1 });
 
-    res.status(200).json({ success: true, labAppointments: labAppts });
+    return sendSuccess(res, appointments);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   GET /api/lab/org-appointments
- * @desc    Get lab appointments for an organization
- * @access  Protected (ORG STAFF)
+ * @desc    Get appointments for the organization
+ * @access  Protected (Org Staff, Super Admin)
  */
-const getOrgLabAppointments = async (req, res) => {
+const getOrgAppointments = async (req, res) => {
   try {
-    const query = req.user.role === 'SUPER_ADMIN' ? {} : { organizationId: req.orgScope };
-    
-    const labAppts = await LabAppointment.find(query)
+    const query = {};
+
+    // Multi-tenant enforcement
+    if (req.user.role !== 'SUPER_ADMIN') {
+      query.organizationId = req.orgScope;
+    } else if (req.query.organizationId) {
+      query.organizationId = req.query.organizationId;
+    }
+
+    if (req.query.status) query.status = req.query.status;
+
+    const appointments = await LabAppointment.find(query)
       .populate('patientId', 'firstName lastName email')
       .populate('labTechnicianId', 'firstName lastName')
-      .sort({ date: -1 });
+      .sort({ date: -1, timeSlot: -1 });
 
-    res.status(200).json({ success: true, labAppointments: labAppts });
+    return sendSuccess(res, appointments);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   PATCH /api/lab/:id/status
  * @desc    Update lab appointment status
- * @access  Protected (ORG STAFF)
+ * @access  Protected (Lab Tech, Org Admin)
  */
-const updateLabStatus = async (req, res) => {
+const updateStatus = async (req, res) => {
   try {
-    const labAppt = await LabAppointment.findById(req.params.id);
-    if (!labAppt) {
-      return res.status(404).json({ success: false, message: 'Lab appointment not found.' });
-    }
-
-    if (req.user.role === 'PATIENT') {
-      return res.status(403).json({ success: false, message: 'Patients cannot update lab status directly.' });
-    } else if (req.user.role !== 'SUPER_ADMIN') {
-      if (labAppt.organizationId.toString() !== req.orgScope.toString()) {
-        return res.status(403).json({ success: false, message: 'Forbidden: Cannot update lab appointments outside your organization.' });
-      }
-    }
-
     const { status, labTechnicianId } = req.body;
-    labAppt.status = status;
-    if (labTechnicianId) labAppt.labTechnicianId = labTechnicianId;
+    const query = { _id: req.params.id };
 
-    await labAppt.save();
-    res.status(200).json({ success: true, labAppointment: labAppt });
+    if (req.user.role !== 'SUPER_ADMIN') {
+      query.organizationId = req.orgScope;
+    }
+
+    const appointment = await LabAppointment.findOne(query);
+
+    if (!appointment) {
+      return sendError(res, 'Appointment not found or access denied', 404);
+    }
+
+    appointment.status = status;
+    if (labTechnicianId) appointment.labTechnicianId = labTechnicianId;
+    
+    await appointment.save();
+
+    return sendSuccess(res, appointment, `Appointment marked as ${status}`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   PATCH /api/lab/:id/cancel
- * @desc    Cancel a lab appointment
- * @access  Protected
+ * @desc    Cancel lab appointment
+ * @access  Protected (Patient, Org Admin, Super Admin)
  */
-const cancelLabAppointment = async (req, res) => {
+const cancelAppointment = async (req, res) => {
   try {
-    const labAppt = await LabAppointment.findById(req.params.id);
-    if (!labAppt) {
-      return res.status(404).json({ success: false, message: 'Lab appointment not found.' });
+    const { reason } = req.body;
+    const query = { _id: req.params.id };
+
+    const appointment = await LabAppointment.findById(req.params.id);
+    if (!appointment) return sendError(res, 'Appointment not found', 404);
+
+    // Security Logic
+    let isAuthorized = false;
+
+    if (req.user.role === 'SUPER_ADMIN') {
+      isAuthorized = true;
+    } else if (req.user.role === 'PATIENT') {
+      // Patient can only cancel their own
+      if (appointment.patientId.toString() === req.user._id.toString()) {
+        isAuthorized = true;
+      }
+    } else {
+      // Org staff can cancel within their org
+      if (appointment.organizationId.toString() === req.orgScope?.toString()) {
+        isAuthorized = true;
+      }
     }
 
-    const role = req.user.role;
-
-    if (role === 'PATIENT') {
-      if (labAppt.patientId.toString() !== req.user._id.toString()) {
-        return res.status(403).json({ success: false, message: 'Forbidden: You can only cancel your own lab appointments.' });
-      }
-    } else if (role !== 'SUPER_ADMIN') {
-      if (labAppt.organizationId.toString() !== req.orgScope.toString()) {
-         return res.status(403).json({ success: false, message: 'Forbidden: Cannot cancel lab appointments outside your organization.' });
-      }
+    if (!isAuthorized) {
+      return sendError(res, 'Not authorized to cancel this appointment', 403);
     }
 
-    labAppt.status = 'Cancelled';
-    labAppt.cancelledAt = new Date();
-    labAppt.cancelledBy = req.user._id;
-    labAppt.cancelReason = req.body.reason || 'No reason provided';
+    appointment.status = 'Cancelled';
+    appointment.cancelledAt = new Date();
+    appointment.cancelledBy = req.user._id;
+    appointment.cancelReason = reason || 'Cancelled by user';
 
-    await labAppt.save();
+    await appointment.save();
 
-    res.status(200).json({ success: true, message: 'Lab appointment cancelled successfully.', labAppointment: labAppt });
+    return sendSuccess(res, appointment, 'Appointment cancelled successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 module.exports = {
-  bookLabTest,
-  getMyLabAppointments,
-  getOrgLabAppointments,
-  updateLabStatus,
-  cancelLabAppointment
+  bookAppointment,
+  getMyAppointments,
+  getOrgAppointments,
+  updateStatus,
+  cancelAppointment
 };

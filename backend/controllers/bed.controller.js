@@ -1,41 +1,67 @@
 const Bed = require('../models/Bed');
 const Admission = require('../models/Admission');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
-// Get all beds
-exports.getBeds = async (req, res) => {
+/**
+ * @route   GET /api/inpatient/beds
+ * @desc    Get all beds (scoped by organization)
+ */
+const getBeds = async (req, res) => {
   try {
-    const beds = await Bed.find().populate('currentPatient', 'firstName lastName');
-    res.json({ beds });
+    const query = {};
+    if (req.user.role === 'SUPER_ADMIN') {
+      if (req.query.organizationId) query.organizationId = req.query.organizationId;
+    } else {
+      query.organizationId = req.user.organizationId;
+    }
+
+    const beds = await Bed.find(query).populate('currentPatient', 'firstName lastName');
+    return sendSuccess(res, beds, `Found ${beds.length} beds`);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching beds', error: error.message });
+    return sendError(res, error.message);
   }
 };
 
-// Create a new bed
-exports.createBed = async (req, res) => {
+/**
+ * @route   POST /api/inpatient/beds
+ * @desc    Create a new bed
+ */
+const createBed = async (req, res) => {
   try {
-    const bed = new Bed(req.body);
+    const bed = new Bed({
+      ...req.body,
+      organizationId: req.user.organizationId
+    });
     await bed.save();
-    res.status(201).json({ bed });
+    return sendSuccess(res, bed, 'Bed created successfully', 201);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating bed', error: error.message });
+    return sendError(res, error.message);
   }
 };
 
-// Admit a patient
-exports.admitPatient = async (req, res) => {
+/**
+ * @route   POST /api/inpatient/admissions
+ * @desc    Admit a patient
+ */
+const admitPatient = async (req, res) => {
   try {
     const { patient, bedId, reason, initialObservations } = req.body;
     
     const bed = await Bed.findById(bedId);
     if (!bed || bed.status !== 'Available') {
-      return res.status(400).json({ message: 'Bed is not available' });
+      return sendError(res, 'Bed is not available', 400);
+    }
+
+    // Security: Scope check
+    if (req.user.role !== 'SUPER_ADMIN' && bed.organizationId?.toString() !== req.user.organizationId?.toString()) {
+      return sendError(res, 'Access denied', 403);
     }
 
     const admission = new Admission({
       patient,
       bed: bedId,
-      admittedBy: req.user.id,
+      organizationId: req.user.organizationId,
+      admittedBy: req.user._id,
       reason,
       initialObservations
     });
@@ -47,20 +73,28 @@ exports.admitPatient = async (req, res) => {
     bed.currentPatient = patient;
     await bed.save();
 
-    res.status(201).json({ message: 'Patient admitted successfully', admission });
+    return sendSuccess(res, admission, 'Patient admitted successfully', 201);
   } catch (error) {
-    res.status(500).json({ message: 'Error admitting patient', error: error.message });
+    return sendError(res, error.message);
   }
 };
 
-// Discharge a patient
-exports.dischargePatient = async (req, res) => {
+/**
+ * @route   PATCH /api/inpatient/admissions/:id/discharge
+ * @desc    Discharge a patient
+ */
+const dischargePatient = async (req, res) => {
   try {
     const { dischargeSummary } = req.body;
     const admission = await Admission.findById(req.params.id);
     
     if (!admission || admission.status !== 'Admitted') {
-      return res.status(404).json({ message: 'Active admission not found' });
+      return sendError(res, 'Active admission not found', 404);
+    }
+
+    // Security: Scope check
+    if (req.user.role !== 'SUPER_ADMIN' && admission.organizationId?.toString() !== req.user.organizationId?.toString()) {
+      return sendError(res, 'Access denied', 403);
     }
 
     admission.status = 'Discharged';
@@ -71,26 +105,39 @@ exports.dischargePatient = async (req, res) => {
     // Free the bed
     const bed = await Bed.findById(admission.bed);
     if (bed) {
-      bed.status = 'Available'; // Or 'Maintenance' if we want reality
+      bed.status = 'Available';
       bed.currentPatient = null;
       await bed.save();
     }
 
-    res.json({ message: 'Patient discharged successfully', admission });
+    return sendSuccess(res, admission, 'Patient discharged successfully');
   } catch (error) {
-    res.status(500).json({ message: 'Error discharging patient', error: error.message });
+    return sendError(res, error.message);
   }
 };
 
-// Get current admissions
-exports.getAdmissions = async (req, res) => {
+/**
+ * @route   GET /api/inpatient/admissions
+ * @desc    Get current admissions (scoped)
+ */
+const getAdmissions = async (req, res) => {
   try {
-    const admissions = await Admission.find({ status: 'Admitted' })
+    const query = { status: 'Admitted' };
+    if (req.user.role === 'SUPER_ADMIN') {
+      if (req.query.organizationId) query.organizationId = req.query.organizationId;
+    } else {
+      query.organizationId = req.user.organizationId;
+    }
+
+    const admissions = await Admission.find(query)
       .populate('patient', 'firstName lastName email')
       .populate('bed', 'bedNumber ward')
       .populate('admittedBy', 'firstName lastName');
-    res.json({ admissions });
+      
+    return sendSuccess(res, admissions, `Found ${admissions.length} active admissions`);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching admissions', error: error.message });
+    return sendError(res, error.message);
   }
 };
+
+module.exports = { getBeds, createBed, admitPatient, dischargePatient, getAdmissions };

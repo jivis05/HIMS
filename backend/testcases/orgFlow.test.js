@@ -9,13 +9,17 @@ describe('Organization & Staff Management Flow', () => {
   let orgId;
 
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URI);
+    // Already connected in server.js but for safety:
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(process.env.MONGO_URI);
+    }
     await User.deleteMany({ email: { $in: ['testadmin@org.com', 'meredith@org.com', 'strange@org.com', 'illegal@org.com'] } });
     await Organization.deleteMany({ email: 'test@org.com' });
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
+    // Do not close connection here if it's shared, or check if it's the test runner's responsibility
+    // await mongoose.connection.close();
   });
 
   test('1. Should register a new organization and admin', async () => {
@@ -34,7 +38,8 @@ describe('Organization & Staff Management Flow', () => {
 
     expect(res.statusCode).toEqual(201);
     expect(res.body.success).toBe(true);
-    orgId = res.body.organization.id;
+    // Standardized response: data wrapper
+    orgId = res.body.data.id;
   });
 
   test('2. Should reject staff creation if org is unverified', async () => {
@@ -45,7 +50,7 @@ describe('Organization & Staff Management Flow', () => {
         password: 'Password123'
       });
     
-    adminToken = loginRes.body.token;
+    adminToken = loginRes.body.data.token;
 
     const res = await request(app)
       .post('/api/org/users')
@@ -55,7 +60,7 @@ describe('Organization & Staff Management Flow', () => {
         lastName: 'Strange',
         email: 'strange@org.com',
         password: 'Password123',
-        role: 'Doctor'
+        role: 'DOCTOR' // Normalized role
       });
 
     expect(res.statusCode).toEqual(403);
@@ -70,7 +75,7 @@ describe('Organization & Staff Management Flow', () => {
         lastName: 'Doctor',
         email: 'illegal@org.com',
         password: 'Password123',
-        role: 'Doctor'
+        role: 'DOCTOR' // Normalized role
       });
 
     expect(res.statusCode).toEqual(403);
@@ -88,7 +93,7 @@ describe('Organization & Staff Management Flow', () => {
         lastName: 'Grey',
         email: 'meredith@org.com',
         password: 'Password123',
-        role: 'Doctor',
+        role: 'DOCTOR', // Normalized role
         specialty: 'Surgery'
       });
 
@@ -97,7 +102,9 @@ describe('Organization & Staff Management Flow', () => {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(res.statusCode).toEqual(200);
-    const hasMeredith = res.body.doctors.some(d => d.email === 'meredith@org.com');
+    // Standardized response: data is the array
+    const doctors = res.body.data;
+    const hasMeredith = doctors.some(d => d.email === 'meredith@org.com');
     expect(hasMeredith).toBe(true);
   });
 });

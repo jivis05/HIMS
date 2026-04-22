@@ -1,70 +1,110 @@
 const BloodStock = require('../models/BloodStock');
 const BloodDonor = require('../models/BloodDonor');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
+/**
+ * @route   GET /api/bloodbank/stock
+ * @desc    Get blood stock (scoped)
+ */
 const getBloodStock = async (req, res) => {
   try {
-    const stock = await BloodStock.find();
-    // Initialize stock if empty
-    if (stock.length === 0) {
+    const orgId = req.user.role === 'SUPER_ADMIN' ? req.query.organizationId : req.user.organizationId;
+    if (!orgId && req.user.role !== 'SUPER_ADMIN') return sendError(res, 'Organization scope required', 400);
+
+    let stock = await BloodStock.find({ organizationId: orgId });
+    
+    // Initialize stock if empty for this org
+    if (stock.length === 0 && orgId) {
       const groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-      const initialStock = await BloodStock.insertMany(groups.map(g => ({ bloodGroup: g, units: 0 })));
-      return res.status(200).json({ success: true, stock: initialStock });
+      stock = await BloodStock.insertMany(groups.map(g => ({ 
+        organizationId: orgId, 
+        bloodGroup: g, 
+        units: 0 
+      })));
     }
-    res.status(200).json({ success: true, stock });
+    
+    return sendSuccess(res, stock, `Found ${stock.length} blood group stocks`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
+/**
+ * @route   POST /api/bloodbank/stock
+ * @desc    Update blood stock
+ */
 const updateBloodStock = async (req, res) => {
   try {
-    const { bloodGroup, units, action } = req.body; // action: 'add' or 'subtract'
-    const stock = await BloodStock.findOne({ bloodGroup });
-    if (!stock) return res.status(404).json({ success: false, message: 'Blood group not found' });
+    const { bloodGroup, units, action } = req.body;
+    const orgId = req.user.organizationId;
+
+    const stock = await BloodStock.findOne({ organizationId: orgId, bloodGroup });
+    if (!stock) return sendError(res, 'Blood group not found in your organization', 404);
 
     if (action === 'add') {
       stock.units += Number(units);
     } else {
-      if (stock.units < units) return res.status(400).json({ success: false, message: 'Insufficient stock' });
+      if (stock.units < units) return sendError(res, 'Insufficient stock', 400);
       stock.units -= Number(units);
     }
 
     await stock.save();
-    res.status(200).json({ success: true, stock });
+    return sendSuccess(res, stock, 'Blood stock updated successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
+/**
+ * @route   GET /api/bloodbank/donors
+ * @desc    Get blood donors (scoped)
+ */
 const getDonors = async (req, res) => {
   try {
-    const donors = await BloodDonor.find().sort({ lastDonationDate: -1 });
-    res.status(200).json({ success: true, count: donors.length, donors });
+    const query = {};
+    if (req.user.role === 'SUPER_ADMIN') {
+      if (req.query.organizationId) query.organizationId = req.query.organizationId;
+    } else {
+      query.organizationId = req.user.organizationId;
+    }
+
+    const donors = await BloodDonor.find(query).sort({ lastDonationDate: -1 });
+    return sendSuccess(res, donors, `Found ${donors.length} donors`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
+/**
+ * @route   POST /api/bloodbank/donors
+ * @desc    Add blood donor and update stock
+ */
 const addDonor = async (req, res) => {
   try {
     const { name, bloodGroup, phone, email, units } = req.body;
     const donationUnits = Number(units || 1);
+    const orgId = req.user.organizationId;
+
     const donor = await BloodDonor.create({
-      name, bloodGroup, phone, email,
+      name, 
+      bloodGroup, 
+      phone, 
+      email,
+      organizationId: orgId,
       lastDonationDate: new Date(),
       donations: [{ date: new Date(), units: donationUnits }]
     });
     
-    // Also update blood stock
-    const stock = await BloodStock.findOne({ bloodGroup });
+    // Scoped stock update
+    const stock = await BloodStock.findOne({ organizationId: orgId, bloodGroup });
     if (stock) {
       stock.units += donationUnits;
       await stock.save();
     }
 
-    res.status(201).json({ success: true, donor });
+    return sendSuccess(res, donor, 'Donor added and stock updated', 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 

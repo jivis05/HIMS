@@ -1,111 +1,90 @@
 const Log = require('../models/Log');
 const User = require('../models/User.model');
-const Invoice = require('../models/Invoice');
 const Organization = require('../models/Organization.model');
-const { logAction } = require('../utils/auditLog');
+const Appointment = require('../models/Appointment.model');
+const LabAppointment = require('../models/LabAppointment.model');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
 /**
- * @desc Get all audit logs
- */
-const getLogs = async (req, res) => {
-  try {
-    const logs = await Log.find()
-      .populate('user', 'firstName lastName role')
-      .sort({ createdAt: -1 })
-      .limit(100);
-    res.status(200).json({ success: true, count: logs.length, logs });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-/**
- * @desc Get system-wide statistics
+ * @route   GET /api/superadmin/stats
+ * @desc    Global system statistics and summary
  */
 const getSystemStats = async (req, res) => {
   try {
-    const Appointment = require('../models/Appointment.model');
-    const LabAppointment = require('../models/LabAppointment.model');
-    
-    const [userCount, doctorCount, doctorAppts, labAppts, orgCount] = await Promise.all([
-      User.countDocuments({ role: 'PATIENT' }),
-      User.countDocuments({ role: 'DOCTOR' }),
-      Appointment.countDocuments(),
-      LabAppointment.countDocuments(),
-      Organization.countDocuments()
+    const [users, orgs, docAppts, labAppts, logs] = await Promise.all([
+      User.find().select('-password').populate('organizationId', 'name').limit(10),
+      Organization.find().limit(10),
+      Appointment.find().limit(10),
+      LabAppointment.find().limit(10),
+      Log.find().sort({ createdAt: -1 }).limit(10)
     ]);
 
-    res.status(200).json({
-      success: true,
-      stats: {
-        activePatients: userCount,
-        doctorsOnStaff: doctorCount,
-        totalAppointments: doctorAppts + labAppts,
-        totalOrganizations: orgCount,
-        systemHealth: 'Optimal'
-      }
-    });
+    const stats = {
+      totalUsers: await User.countDocuments(),
+      totalOrgs: await Organization.countDocuments(),
+      totalAppointments: (await Appointment.countDocuments()) + (await LabAppointment.countDocuments())
+    };
+
+    return sendSuccess(res, {
+      users,
+      orgs,
+      appointments: [...docAppts, ...labAppts],
+      logs,
+      stats
+    }, 'Global system statistics retrieved');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
- * @desc List all organizations
- */
-const getAllOrganizations = async (req, res) => {
-  try {
-    const orgs = await Organization.find()
-      .populate('admin', 'firstName lastName email')
-      .sort({ createdAt: -1 });
-    res.status(200).json({ success: true, count: orgs.length, organizations: orgs });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-/**
- * @desc List all users globally
+ * @route   GET /api/superadmin/users
  */
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find()
-      .select('-password')
-      .populate('organizationId', 'name')
-      .sort({ createdAt: -1 });
-    res.status(200).json({ success: true, count: users.length, users });
+    const users = await User.find().select('-password').populate('organizationId', 'name');
+    return sendSuccess(res, users);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
- * @desc List all appointments globally (Doctor + Lab)
+ * @route   GET /api/superadmin/orgs
+ */
+const getAllOrgs = async (req, res) => {
+  try {
+    const orgs = await Organization.find().populate('admin', 'firstName lastName email');
+    return sendSuccess(res, orgs);
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+/**
+ * @route   GET /api/superadmin/appointments
  */
 const getAllAppointments = async (req, res) => {
   try {
-    const Appointment = require('../models/Appointment.model');
-    const LabAppointment = require('../models/LabAppointment.model');
-    
-    const [doctorAppointments, labAppointments] = await Promise.all([
-      Appointment.find()
-        .populate('patient', 'firstName lastName')
-        .populate('doctor', 'firstName lastName')
-        .populate('organizationId', 'name')
-        .sort({ date: -1 }),
-      LabAppointment.find()
-        .populate('patientId', 'firstName lastName')
-        .populate('organizationId', 'name')
-        .sort({ date: -1 })
+    const [docAppts, labAppts] = await Promise.all([
+      Appointment.find().populate('patient', 'firstName lastName').populate('doctor', 'firstName lastName').populate('organizationId', 'name'),
+      LabAppointment.find().populate('patientId', 'firstName lastName').populate('organizationId', 'name')
     ]);
-    
-    res.status(200).json({ 
-      success: true, 
-      appointments: doctorAppointments,
-      labAppointments: labAppointments
-    });
+    return sendSuccess(res, { doctorAppointments: docAppts, labAppointments: labAppts });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
+  }
+};
+
+/**
+ * @route   GET /api/superadmin/logs
+ */
+const getAllLogs = async (req, res) => {
+  try {
+    const logs = await Log.find().populate('user', 'firstName lastName role').sort({ createdAt: -1 });
+    return sendSuccess(res, logs);
+  } catch (error) {
+    return sendError(res, error.message);
   }
 };
 
@@ -119,16 +98,10 @@ const verifyOrganization = async (req, res) => {
       { isVerified: true, verificationStatus: 'APPROVED' },
       { new: true }
     );
-
-    if (!org) {
-      return res.status(404).json({ success: false, message: 'Organization not found.' });
-    }
-
-    await logAction(req.user._id, 'ORG_VERIFY', 'SuperAdmin', `Organization approved: ${org.name}`, 'Info', req.ip);
-
-    res.status(200).json({ success: true, message: 'Organization approved successfully.', organization: org });
+    if (!org) return sendError(res, 'Organization not found.', 404);
+    return sendSuccess(res, org, 'Organization approved successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -142,25 +115,19 @@ const rejectOrganization = async (req, res) => {
       { isVerified: false, verificationStatus: 'REJECTED' },
       { new: true }
     );
-
-    if (!org) {
-      return res.status(404).json({ success: false, message: 'Organization not found.' });
-    }
-
-    await logAction(req.user._id, 'ORG_REJECT', 'SuperAdmin', `Organization rejected: ${org.name}`, 'Warning', req.ip);
-
-    res.status(200).json({ success: true, message: 'Organization rejected.', organization: org });
+    if (!org) return sendError(res, 'Organization not found.', 404);
+    return sendSuccess(res, org, 'Organization rejected successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
-module.exports = { 
-  getLogs, 
-  getSystemStats, 
-  getAllOrganizations,
+module.exports = {
+  getSystemStats,
   getAllUsers,
+  getAllOrgs,
   getAllAppointments,
-  verifyOrganization, 
-  rejectOrganization 
+  getAllLogs,
+  verifyOrganization,
+  rejectOrganization
 };

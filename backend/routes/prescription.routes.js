@@ -1,17 +1,13 @@
 const express = require('express');
-const {
-  getPrescriptions,
-  createPrescription,
-  dispensePrescription
-} = require('../controllers/prescription.controller');
-const { protect, authorize } = require('../middleware/auth.middleware');
-
 const router = express.Router();
+const { getPrescriptions, createPrescription, dispensePrescription } = require('../controllers/prescription.controller');
+const { protect, requireRole, requireOrgScope } = require('../middleware/auth.middleware');
 
-router.route('/')
-  .get(protect, getPrescriptions)
-  .post(protect, authorize('Doctor'), createPrescription);
+router.use(protect);
+router.use(requireOrgScope);
 
-router.patch('/:id/dispense', protect, authorize('Pharmacist'), dispensePrescription);
+router.get('/', getPrescriptions);
+router.post('/', requireRole(['DOCTOR', 'ORG_ADMIN', 'SUPER_ADMIN']), createPrescription);
+router.patch('/:id/dispense', requireRole(['RECEPTIONIST', 'ORG_ADMIN', 'SUPER_ADMIN']), dispensePrescription);
 
 module.exports = router;

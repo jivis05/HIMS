@@ -9,10 +9,9 @@ const ROLE_REDIRECTS = {
   NURSE: '/nurse',
   RECEPTIONIST: '/reception',
   PHARMACIST: '/pharmacy',
-  LAB_TECHNICIAN: '/lab',
+  LAB_TECH: '/lab',
   ORG_ADMIN: '/org-dashboard',
   SUPER_ADMIN: '/super-admin',
-  HOSPITAL_ADMIN: '/admin',
 };
 
 export const Login = () => {

@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { getShifts, createShift, deleteShift } = require('../controllers/shift.controller');
-const { protect, authorize } = require('../middleware/auth.middleware');
+const { protect, requireRole, requireOrgScope } = require('../middleware/auth.middleware');
 
 router.use(protect);
+router.use(requireOrgScope);
 
-router.get('/', getShifts); // All roles can see their own
-router.post('/', authorize('Admin', 'Hospital_Admin'), createShift);
-router.delete('/:id', authorize('Admin', 'Hospital_Admin'), deleteShift);
+router.get('/', getShifts);
+router.post('/', requireRole(['ORG_ADMIN', 'SUPER_ADMIN']), createShift);
+router.delete('/:id', requireRole(['ORG_ADMIN', 'SUPER_ADMIN']), deleteShift);
 
 module.exports = router;

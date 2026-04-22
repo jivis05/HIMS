@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const shiftSchema = new mongoose.Schema({
+  organizationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
   staff: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', 

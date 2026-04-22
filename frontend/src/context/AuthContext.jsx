@@ -24,10 +24,10 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const { data } = await authAPI.getMe();
-        setUser(data.user);
+        const res = await authAPI.getMe();
+        // Backend returns { success: true, data: { ...user } }
+        setUser(res.data.data);
       } catch {
-        // Token is invalid or expired — clear storage
         localStorage.removeItem('hims_token');
         localStorage.removeItem('hims_user');
         setUser(null);
@@ -39,16 +39,18 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const { data } = await authAPI.login({ email, password });
-    localStorage.setItem('hims_token', data.token);
-    localStorage.setItem('hims_user', JSON.stringify(data.user));
-    setUser(data.user);
-    return data.user;
+    const res = await authAPI.login({ email, password });
+    // Backend returns { success: true, data: { token, user } }
+    const { token, user } = res.data.data;
+    localStorage.setItem('hims_token', token);
+    localStorage.setItem('hims_user', JSON.stringify(user));
+    setUser(user);
+    return user;
   };
 
   const register = async (formData) => {
-    const { data } = await authAPI.register(formData);
-    return data;
+    const res = await authAPI.register(formData);
+    return res.data.data;
   };
 
   const logout = () => {
@@ -59,11 +61,12 @@ export const AuthProvider = ({ children }) => {
 
   const refreshUserSession = async () => {
     try {
-      const { data } = await authAPI.getMe();
-      if (data && data.user) {
-        setUser(data.user);
-        localStorage.setItem('hims_user', JSON.stringify(data.user));
-        return data.user;
+      const res = await authAPI.getMe();
+      if (res.data && res.data.data) {
+        const user = res.data.data;
+        setUser(user);
+        localStorage.setItem('hims_user', JSON.stringify(user));
+        return user;
       }
     } catch (error) {
       console.error('Failed to refresh user session:', error);

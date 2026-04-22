@@ -11,14 +11,13 @@ describe('Super Admin Workflow & Organization Verification', () => {
   let doctorEmail = 'test.doc@test.com';
 
   beforeAll(async () => {
-    // 1. Connect to DB
-    await mongoose.connect(process.env.MONGO_URI);
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(process.env.MONGO_URI);
+    }
     
-    // 2. Clear existing test data
     await User.deleteMany({ email: { $in: ['super@hims.com', 'admin@test.com', doctorEmail] } });
     await Organization.deleteMany({ email: 'test@org.com' });
 
-    // 3. Create Super Admin
     await User.create({
       firstName: 'Super',
       lastName: 'Admin',
@@ -32,11 +31,11 @@ describe('Super Admin Workflow & Organization Verification', () => {
       .post('/api/auth/login')
       .send({ email: 'super@hims.com', password: 'Test@1234' });
     
-    superAdminToken = superRes.body.token;
+    superAdminToken = superRes.body.data.token;
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
+    // await mongoose.connection.close();
   });
 
   test('Step 1: Register Organization (Should be unverified)', async () => {
@@ -55,16 +54,15 @@ describe('Super Admin Workflow & Organization Verification', () => {
       });
 
     expect(res.statusCode).toBe(201);
-    orgId = res.body.organization.id;
+    orgId = res.body.data.id;
     expect(orgId).toBeDefined();
-    expect(res.body.organization.isVerified).toBe(false);
-    expect(res.body.organization.verificationStatus).toBe('PENDING');
+    expect(res.body.data.isVerified).toBe(false);
+    expect(res.body.data.verificationStatus).toBe('PENDING');
 
-    // Login as Org Admin
     const loginRes = await request(app)
       .post('/api/auth/login')
       .send({ email: 'admin@test.com', password: 'Test@1234' });
-    orgAdminToken = loginRes.body.token;
+    orgAdminToken = loginRes.body.data.token;
     expect(orgAdminToken).toBeDefined();
   });
 
@@ -87,23 +85,23 @@ describe('Super Admin Workflow & Organization Verification', () => {
 
   test('Step 3: Super Admin can list and approve organization', async () => {
     expect(superAdminToken).toBeDefined();
-    // List orgs
     const listRes = await request(app)
       .get('/api/superadmin/orgs')
       .set('Authorization', `Bearer ${superAdminToken}`);
 
+    if (listRes.statusCode !== 200) console.log('DEBUG: getAllOrgs failed:', listRes.body);
     expect(listRes.statusCode).toBe(200);
-    const org = listRes.body.organizations.find(o => o._id === orgId);
+    const orgs = listRes.body.data;
+    const org = orgs.find(o => o._id === orgId);
     expect(org).toBeDefined();
 
-    // Approve
     const approveRes = await request(app)
       .patch(`/api/superadmin/orgs/${orgId}/verify`)
       .set('Authorization', `Bearer ${superAdminToken}`);
 
     expect(approveRes.statusCode).toBe(200);
-    expect(approveRes.body.organization.isVerified).toBe(true);
-    expect(approveRes.body.organization.verificationStatus).toBe('APPROVED');
+    expect(approveRes.body.data.isVerified).toBe(true);
+    expect(approveRes.body.data.verificationStatus).toBe('APPROVED');
   });
 
   test('Step 4: Approved Org Admin can now create staff', async () => {

@@ -20,7 +20,8 @@ const invoiceSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now },
     collectedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   }],
-  dueDate: { type: Date }
+  dueDate: { type: Date },
+  organizationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Invoice', invoiceSchema);

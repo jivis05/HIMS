@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { getInventory, addInventoryItem, updateStock, getLowStock } = require('../controllers/inventory.controller');
-const { protect, authorize } = require('../middleware/auth.middleware');
+const { protect, requireRole, requireOrgScope } = require('../middleware/auth.middleware');
 
 router.use(protect);
+router.use(requireOrgScope);
 
-router.get('/', authorize('Admin', 'Receptionist', 'Doctor'), getInventory);
-router.get('/low-stock', authorize('Admin', 'Receptionist'), getLowStock);
-router.post('/', authorize('Admin', 'Receptionist'), addInventoryItem);
-router.patch('/:id/stock', authorize('Admin', 'Receptionist'), updateStock);
+router.get('/', getInventory);
+router.get('/low-stock', getLowStock);
+router.post('/', requireRole(['ORG_ADMIN', 'SUPER_ADMIN', 'RECEPTIONIST', 'LAB_TECH']), addInventoryItem);
+router.patch('/:id/stock', requireRole(['ORG_ADMIN', 'SUPER_ADMIN', 'RECEPTIONIST', 'LAB_TECH']), updateStock);
 
 module.exports = router;

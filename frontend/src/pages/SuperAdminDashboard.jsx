@@ -15,18 +15,15 @@ export const SuperAdminDashboard = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const [statsRes, logsRes, usersRes, analyticsRes, orgsRes] = await Promise.all([
-        superAdminAPI.getStats(),
-        superAdminAPI.getLogs(),
-        userAPI.getAll(),
-        analyticsAPI.getStats(),
-        superAdminAPI.getOrgs()
-      ]);
-      setStats(statsRes.data.stats);
-      setLogs(logsRes.data.logs || []);
-      setUsers(usersRes.data.users || []);
-      setAnalytics(analyticsRes.data.data);
-      setOrgs(orgsRes.data.organizations || []);
+      const res = await superAdminAPI.getStats();
+      const nexusData = res.data.data;
+      
+      setStats(nexusData.stats || {});
+      setLogs(nexusData.logs || []);
+      setUsers(nexusData.users || []);
+      setOrgs(nexusData.orgs || []);
+      // Optional: if analytics are still separate, keep them, but here we merged them
+      setAnalytics(nexusData.analytics || null);
     } catch (error) {
       console.error('Error fetching superadmin data', error);
     } finally {
@@ -81,19 +78,19 @@ export const SuperAdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
          <div className="clinical-card p-6 bg-slate-900 text-white border-none shadow-2xl hover:translate-y-[-4px] transition-all duration-300">
             <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Users</p>
-            <h3 className="text-3xl font-display font-black mt-2">{stats?.activePatients + stats?.doctorsOnStaff}</h3>
+            <h3 className="text-3xl font-display font-black mt-2">{Number(stats?.totalUsers) || 0}</h3>
             <div className="mt-4 flex items-center gap-2 text-[10px] text-accent-emerald font-bold">
                <span className="material-symbols-outlined text-sm">group</span> Global Directory
             </div>
          </div>
          <div className="clinical-card p-6 border-l-4 border-l-primary hover:shadow-xl transition-all">
             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Appointments</p>
-            <h3 className="text-3xl font-display font-black text-slate-800 mt-2">{stats?.totalAppointments || 0}</h3>
+            <h3 className="text-3xl font-display font-black text-slate-800 mt-2">{Number(stats?.totalAppointments) || 0}</h3>
             <p className="text-[10px] text-gray-400 mt-4 font-bold uppercase tracking-tighter">Doctor + Lab Tests</p>
          </div>
          <div className="clinical-card p-6 border-l-4 border-l-accent-indigo hover:shadow-xl transition-all">
             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Organizations</p>
-            <h3 className="text-3xl font-display font-black text-slate-800 mt-2">{stats?.totalOrganizations || 0}</h3>
+            <h3 className="text-3xl font-display font-black text-slate-800 mt-2">{Number(stats?.totalOrgs) || 0}</h3>
             <p className="text-[10px] text-gray-400 mt-4 font-bold uppercase tracking-tighter">Hospitals, Clinics, Labs</p>
          </div>
          <div className="clinical-card p-6 border-l-4 border-l-accent-emerald hover:shadow-xl transition-all">

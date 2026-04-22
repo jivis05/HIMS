@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const bedSchema = new mongoose.Schema({
   bedNumber: { type: String, required: true, unique: true },
+  organizationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
   ward: { type: String, required: true },
   type: { type: String, enum: ['General', 'Semi-Private', 'Private', 'ICU'], default: 'General' },
   status: { type: String, enum: ['Available', 'Occupied', 'Maintenance', 'Reserved'], default: 'Available' },

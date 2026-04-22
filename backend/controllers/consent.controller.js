@@ -1,67 +1,67 @@
 const Consent = require('../models/Consent.model');
 const { logAction } = require('../utils/auditLog');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
 /**
  * @route   POST /api/consent
- * @desc    Grant new consent to a doctor or hospital
- * @access  Private (Patient)
+ * @desc    Grant new consent to a doctor or organization
  */
 const grantConsent = async (req, res) => {
   try {
-    const { doctor, hospital, expiresAt } = req.body;
+    const { doctor, organizationId, expiresAt } = req.body;
 
-    if (req.user.role !== 'Patient') {
-      return res.status(403).json({ success: false, message: 'Only patients can grant clinical consent.' });
+    if (req.user.role !== 'PATIENT') {
+      return sendError(res, 'Only patients can grant clinical consent.', 403);
     }
 
     const consent = await Consent.create({
       patient: req.user._id,
       doctor,
-      hospital,
+      organizationId,
       expiresAt: new Date(expiresAt)
     });
 
     await logAction(
       req.user._id, 'GRANT_CONSENT', 'Consent',
-      `Patient granted consent to ${doctor ? 'Doctor '+doctor : 'Hospital '+hospital}`,
+      `Patient granted consent to ${doctor ? 'Doctor '+doctor : 'Organization '+organizationId}`,
       'Info', req.ip
     );
 
-    res.status(201).json({ success: true, consent });
+    return sendSuccess(res, consent, 'Consent granted successfully', 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   GET /api/consent/my-consents
  * @desc    Get all consents granted by the current patient
- * @access  Private (Patient)
  */
 const getMyConsents = async (req, res) => {
   try {
+    if (req.user.role !== 'PATIENT') {
+      return sendError(res, 'Only patients can view their granted consents.', 403);
+    }
+
     const consents = await Consent.find({ patient: req.user._id })
       .populate('doctor', 'firstName lastName specialty')
-      .populate('hospital', 'name')
+      .populate('organizationId', 'name')
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, consents });
+    return sendSuccess(res, consents, `Found ${consents.length} consents`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   PATCH /api/consent/:id/revoke
  * @desc    Revoke a consent
- * @access  Private (Patient)
  */
 const revokeConsent = async (req, res) => {
   try {
     const consent = await Consent.findOne({ _id: req.params.id, patient: req.user._id });
-    if (!consent) {
-      return res.status(404).json({ success: false, message: 'Consent record not found.' });
-    }
+    if (!consent) return sendError(res, 'Consent record not found.', 404);
 
     consent.status = 'Revoked';
     await consent.save();
@@ -72,9 +72,9 @@ const revokeConsent = async (req, res) => {
       'Warning', req.ip
     );
 
-    res.status(200).json({ success: true, message: 'Consent revoked successfully.' });
+    return sendSuccess(res, null, 'Consent revoked successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 

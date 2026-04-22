@@ -1,6 +1,7 @@
 const User = require('../models/User.model');
 const jwt = require('jsonwebtoken');
 const { logAction } = require('../utils/auditLog');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
 /**
  * Generate a signed JWT token for the authenticated user.
@@ -21,44 +22,34 @@ const generateToken = (user) => {
 
 /**
  * @route   POST /api/auth/register
- * @desc    Register a new user (public endpoint — role is always forced to 'Patient')
- * @access  Public
+ * @desc    Register a new user (forced to 'PATIENT')
  */
 const register = async (req, res) => {
   try {
     let { firstName, lastName, email, password, role } = req.body;
 
-    // Only allow role = PATIENT for self-registration
-    if (role && role !== 'PATIENT') {
-      return res.status(403).json({ 
-        success: false, 
-        message: 'Forbidden: Only patients can self-register. Staff accounts must be created by an organization administrator.' 
-      });
+    // Only allow PATIENT for self-registration
+    if (role && role.toUpperCase() !== 'PATIENT') {
+      return sendError(res, 'Forbidden: Only patients can self-register.', 403);
     }
-
-    // Force role to PATIENT even if not provided or provided correctly
-    role = 'PATIENT';
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ success: false, message: 'An account with this email already exists.' });
+      return sendError(res, 'An account with this email already exists.', 400);
     }
 
-    // Sanitize and create user
     const user = await User.create({ 
-      firstName: firstName.trim(), 
-      lastName: lastName.trim(), 
-      email: email.toLowerCase().trim(), 
+      firstName: firstName?.trim(), 
+      lastName: lastName?.trim(), 
+      email: email?.toLowerCase().trim(), 
       password, 
-      role 
+      role: 'PATIENT' 
     });
+    
     const token = generateToken(user);
+    await logAction(user._id, 'REGISTER', 'Auth', `New patient account: ${email}`, 'Info', req.ip);
 
-    await logAction(user._id, 'REGISTER', 'Auth', `New patient account registered: ${email}`, 'Info', req.ip);
-
-    res.status(201).json({
-      success: true,
-      message: 'Registration successful.',
+    return sendSuccess(res, {
       token,
       user: {
         id: user._id,
@@ -67,79 +58,38 @@ const register = async (req, res) => {
         email:     user.email,
         role:      user.role,
         organizationId: user.organizationId
-      },
-    });
+      }
+    }, 'Registration successful.', 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-/**
- * @route   POST /api/auth/register-staff
- * @desc    Register a staff account (admin-only, allows specifying role)
- * @access  Protected (Hospital_Admin, Super_Admin)
- */
-const registerStaff = async (req, res) => {
-  try {
-    const { firstName, lastName, email, password, role } = req.body;
-
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ success: false, message: 'An account with this email already exists.' });
-    }
-
-    const user = await User.create({ firstName, lastName, email, password, role });
-    const token = generateToken(user);
-
-    await logAction(req.user._id, 'REGISTER_STAFF', 'Auth', `Admin created ${role} account: ${email}`, 'Info', req.ip);
-
-    res.status(201).json({
-      success: true,
-      message: 'Staff account created successfully.',
-      token,
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName:  user.lastName,
-        email:     user.email,
-        role:      user.role,
-        organizationId: user.organizationId
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   POST /api/auth/login
  * @desc    Authenticate user and return JWT
- * @access  Public
  */
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Please provide email and password.' });
+      return sendError(res, 'Please provide email and password.', 400);
     }
 
     const user = await User.findOne({ email }).select('+password');
     if (!user || !(await user.matchPassword(password))) {
-      return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+      return sendError(res, 'Invalid email or password.', 401);
     }
 
     if (!user.isActive) {
-      return res.status(403).json({ success: false, message: 'Your account has been deactivated. Contact admin.' });
+      return sendError(res, 'Your account has been deactivated.', 403);
     }
 
     const token = generateToken(user);
-
     await logAction(user._id, 'LOGIN', 'Auth', `User logged in: ${email}`, 'Info', req.ip);
 
-    res.status(200).json({
-      success: true,
-      message: 'Login successful.',
+    return sendSuccess(res, {
       token,
       user: {
         id:        user._id,
@@ -148,25 +98,25 @@ const login = async (req, res) => {
         email:     user.email,
         role:      user.role,
         organizationId: user.organizationId
-      },
-    });
+      }
+    }, 'Login successful.');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
 /**
  * @route   GET /api/auth/me
  * @desc    Get current logged-in user
- * @access  Protected
  */
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    res.status(200).json({ success: true, user });
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) return sendError(res, 'User not found.', 404);
+    return sendSuccess(res, user);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
-module.exports = { register, registerStaff, login, getMe };
+module.exports = { register, login, getMe };

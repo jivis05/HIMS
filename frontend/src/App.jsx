@@ -45,7 +45,7 @@ function App() {
             } />
             
             <Route path="/admin" element={
-              <ProtectedRoute allowedRoles={['HOSPITAL_ADMIN', 'SUPER_ADMIN']}>
+              <ProtectedRoute allowedRoles={['ORG_ADMIN', 'SUPER_ADMIN']}>
                 <AdminDashboard />
               </ProtectedRoute>
             } />
@@ -69,19 +69,19 @@ function App() {
             } />
             
             <Route path="/pharmacy" element={
-              <ProtectedRoute allowedRoles={['PHARMACIST']}>
+              <ProtectedRoute allowedRoles={['DOCTOR', 'NURSE', 'ORG_ADMIN', 'SUPER_ADMIN']}>
                 <PharmacyDashboard />
               </ProtectedRoute>
             } />
             
             <Route path="/lab" element={
-              <ProtectedRoute allowedRoles={['LAB_TECHNICIAN']}>
+              <ProtectedRoute allowedRoles={['LAB_TECH', 'ORG_ADMIN', 'SUPER_ADMIN']}>
                 <LabTechnicianDashboard />
               </ProtectedRoute>
             } />
             
             <Route path="/bloodbank" element={
-              <ProtectedRoute allowedRoles={['LAB_TECHNICIAN', 'HOSPITAL_ADMIN', 'SUPER_ADMIN']}>
+              <ProtectedRoute allowedRoles={['LAB_TECH', 'ORG_ADMIN', 'SUPER_ADMIN']}>
                 <BloodBankDashboard />
               </ProtectedRoute>
             } />

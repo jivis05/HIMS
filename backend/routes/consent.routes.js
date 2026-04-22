@@ -1,13 +1,12 @@
 const express = require('express');
-const { grantConsent, getMyConsents, revokeConsent } = require('../controllers/consent.controller');
-const { protect } = require('../middleware/auth.middleware');
-
 const router = express.Router();
+const { grantConsent, getMyConsents, revokeConsent } = require('../controllers/consent.controller');
+const { protect, requireRole, requireOrgScope } = require('../middleware/auth.middleware');
 
 router.use(protect);
 
-router.post('/', grantConsent);
-router.get('/my-consents', getMyConsents);
-router.patch('/:id/revoke', revokeConsent);
+router.post('/', requireRole(['PATIENT']), grantConsent);
+router.get('/my-consents', requireRole(['PATIENT']), getMyConsents);
+router.patch('/:id/revoke', requireRole(['PATIENT']), revokeConsent);
 
 module.exports = router;

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const admissionSchema = new mongoose.Schema({
   patient: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  organizationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization', required: true },
   hospital: { type: mongoose.Schema.Types.ObjectId, ref: 'Hospital' },
   bed: { type: mongoose.Schema.Types.ObjectId, ref: 'Bed', required: true },
   admittedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Doctor or Admin

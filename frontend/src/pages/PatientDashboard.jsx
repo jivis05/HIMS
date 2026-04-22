@@ -28,15 +28,16 @@ export const PatientDashboard = () => {
     ]);
     
     // Find my active admission
-    const myAdmission = (admRes.data.admissions || []).find(a => a.patient?._id === user?._id);
+    const admissions = admRes.data.data || [];
+    const myAdmission = admissions.find(a => a.patient?._id === user?._id || a.patient === user?._id);
 
     return {
-      appointments: apptRes.data.appointments || [],
-      prescriptions: rxRes.data.prescriptions || [],
-      labReports: labRes.data.labReports || [],
-      doctors: docRes.data.doctors || [],
+      appointments: apptRes.data.data || [],
+      prescriptions: rxRes.data.data || [],
+      labReports: labRes.data.data || [],
+      doctors: docRes.data.data || [],
       admission: myAdmission,
-      labAppointments: myLabRes.data.labAppointments || []
+      labAppointments: myLabRes.data.data || []
     };
   };
 

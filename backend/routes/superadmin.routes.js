@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const { 
-  getLogs, 
+  getAllLogs, 
   getSystemStats, 
-  getAllOrganizations, 
+  getAllOrgs, 
   getAllUsers,
   getAllAppointments,
-  verifyOrganization, 
-  rejectOrganization 
+  verifyOrganization,
+  rejectOrganization
 } = require('../controllers/superadmin.controller');
 const { protect, requireRole } = require('../middleware/auth.middleware');
 
 router.use(protect);
 router.use(requireRole(['SUPER_ADMIN']));
 
-router.get('/logs', getLogs);
+router.get('/logs', getAllLogs);
 router.get('/stats', getSystemStats);
 
 // Organization Management
-router.get('/orgs', getAllOrganizations);
+router.get('/orgs', getAllOrgs);
 router.patch('/orgs/:id/verify', verifyOrganization);
 router.patch('/orgs/:id/reject', rejectOrganization);
 

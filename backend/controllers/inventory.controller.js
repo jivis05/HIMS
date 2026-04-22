@@ -1,32 +1,57 @@
 const Inventory = require('../models/Inventory.js');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
+/**
+ * @route   GET /api/inventory
+ * @desc    Get inventory items (scoped)
+ */
 const getInventory = async (req, res) => {
   try {
-    const items = await Inventory.find().sort({ itemName: 1 });
-    res.status(200).json({ success: true, count: items.length, items });
+    const query = {};
+    if (req.user.role === 'SUPER_ADMIN') {
+      if (req.query.organizationId) query.organizationId = req.query.organizationId;
+    } else {
+      query.organizationId = req.user.organizationId;
+    }
+
+    const items = await Inventory.find(query).sort({ itemName: 1 });
+    return sendSuccess(res, items, `Found ${items.length} items`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
+/**
+ * @route   POST /api/inventory
+ * @desc    Add new inventory item
+ */
 const addInventoryItem = async (req, res) => {
   try {
-    const { itemName, category, stockQuantity, unit, threshold, supplier, pricePerUnit } = req.body;
     const item = await Inventory.create({
-      itemName, category, stockQuantity, unit, threshold, supplier, pricePerUnit
+      ...req.body,
+      organizationId: req.user.organizationId
     });
-    res.status(201).json({ success: true, item });
+    return sendSuccess(res, item, 'Inventory item added successfully', 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
+/**
+ * @route   PATCH /api/inventory/:id/stock
+ * @desc    Update stock quantity
+ */
 const updateStock = async (req, res) => {
   try {
-    const { quantity, action } = req.body; // action: 'add' or 'subtract'
+    const { quantity, action } = req.body;
     const item = await Inventory.findById(req.params.id);
     
-    if (!item) return res.status(404).json({ success: false, message: 'Item not found' });
+    if (!item) return sendError(res, 'Item not found', 404);
+
+    // Security: Scope check
+    if (req.user.role !== 'SUPER_ADMIN' && item.organizationId?.toString() !== req.user.organizationId?.toString()) {
+      return sendError(res, 'Access denied', 403);
+    }
 
     if (action === 'add') {
       item.stockQuantity += Number(quantity);
@@ -36,20 +61,31 @@ const updateStock = async (req, res) => {
     }
 
     await item.save();
-    res.status(200).json({ success: true, item });
+    return sendSuccess(res, item, 'Stock updated successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
+/**
+ * @route   GET /api/inventory/low-stock
+ * @desc    Get low stock items
+ */
 const getLowStock = async (req, res) => {
   try {
-    const items = await Inventory.find({
+    const query = {
       $expr: { $lte: ["$stockQuantity", "$threshold"] }
-    });
-    res.status(200).json({ success: true, count: items.length, items });
+    };
+    if (req.user.role === 'SUPER_ADMIN') {
+      if (req.query.organizationId) query.organizationId = req.query.organizationId;
+    } else {
+      query.organizationId = req.user.organizationId;
+    }
+
+    const items = await Inventory.find(query);
+    return sendSuccess(res, items, `Found ${items.length} low stock items`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 

@@ -1,15 +1,21 @@
 const LabReport = require('../models/LabReport.model');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
 /**
  * @route   GET /api/lab-reports
- * @desc    Get lab reports (role-aware)
+ * @desc    Get lab reports (scoped)
  */
 const getLabReports = async (req, res) => {
   try {
-    let query = {};
-    if (req.user.role === 'Patient') query.patient = req.user._id;
-    else if (req.user.role === 'Doctor') query.orderedBy = req.user._id;
-    // Lab_Technician and admins see all reports (pending and completed)
+    const query = {};
+    if (req.user.role === 'SUPER_ADMIN') {
+      if (req.query.organizationId) query.organizationId = req.query.organizationId;
+    } else {
+      query.organizationId = req.user.organizationId;
+    }
+
+    if (req.user.role === 'PATIENT') query.patient = req.user._id;
+    else if (req.user.role === 'DOCTOR') query.orderedBy = req.user._id;
 
     const page  = Math.max(1, parseInt(req.query.page)  || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
@@ -25,9 +31,14 @@ const getLabReports = async (req, res) => {
       LabReport.countDocuments(query)
     ]);
 
-    res.status(200).json({ success: true, count: reports.length, total, page, pages: Math.ceil(total / limit), labReports: reports });
+    return sendSuccess(res, {
+      labReports: reports,
+      total,
+      page,
+      pages: Math.ceil(total / limit)
+    }, `Found ${reports.length} reports`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -39,11 +50,17 @@ const orderLabReport = async (req, res) => {
   try {
     const { patient, testType, testCode, sampleType, priority } = req.body;
     const report = await LabReport.create({
-      patient, orderedBy: req.user._id, testType, testCode, sampleType, priority
+      patient, 
+      orderedBy: req.user._id, 
+      organizationId: req.user.organizationId,
+      testType, 
+      testCode, 
+      sampleType, 
+      priority
     });
-    res.status(201).json({ success: true, report });
+    return sendSuccess(res, report, 'Lab test ordered successfully', 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -54,9 +71,13 @@ const orderLabReport = async (req, res) => {
 const uploadLabResult = async (req, res) => {
   try {
     const report = await LabReport.findById(req.params.id);
-    if (!report) {
-      return res.status(404).json({ success: false, message: 'Lab report not found.' });
+    if (!report) return sendError(res, 'Lab report not found', 404);
+
+    // Security check
+    if (req.user.role !== 'SUPER_ADMIN' && report.organizationId?.toString() !== req.user.organizationId?.toString()) {
+      return sendError(res, 'Access denied', 403);
     }
+
     const { results, remarks, isCritical, reportFileUrl } = req.body;
     report.results = results;
     report.remarks = remarks;
@@ -67,9 +88,9 @@ const uploadLabResult = async (req, res) => {
     report.completedAt = new Date();
     await report.save();
 
-    res.status(200).json({ success: true, report });
+    return sendSuccess(res, report, 'Lab results uploaded successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 

@@ -1,25 +1,33 @@
 const Prescription = require('../models/Prescription.model');
 const Inventory = require('../models/Inventory');
 const { logAction } = require('../utils/auditLog');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
 /**
  * @route   GET /api/prescriptions
- * @desc    Get prescriptions (role-aware)
+ * @desc    Get prescriptions (scoped by organization)
  */
 const getPrescriptions = async (req, res) => {
   try {
-    let query = {};
-    if (req.user.role === 'Patient') query.patient = req.user._id;
-    else if (req.user.role === 'Doctor') query.doctor = req.user._id;
+    const query = {};
+    
+    if (req.user.role === 'SUPER_ADMIN') {
+      if (req.query.organizationId) query.organizationId = req.query.organizationId;
+    } else {
+      query.organizationId = req.user.organizationId;
+    }
+
+    if (req.user.role === 'PATIENT') query.patient = req.user._id;
+    else if (req.user.role === 'DOCTOR') query.doctor = req.user._id;
 
     const prescriptions = await Prescription.find(query)
       .populate('patient', 'firstName lastName')
       .populate('doctor', 'firstName lastName specialty')
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, count: prescriptions.length, prescriptions });
+    return sendSuccess(res, prescriptions, `Found ${prescriptions.length} prescriptions`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -32,13 +40,19 @@ const createPrescription = async (req, res) => {
     const { patient, appointment, medications, diagnosis, notes, expiresAt } = req.body;
 
     const prescription = await Prescription.create({
-      patient, doctor: req.user._id, appointment,
-      medications, diagnosis, notes, expiresAt
+      patient, 
+      doctor: req.user._id, 
+      organizationId: req.user.organizationId,
+      appointment,
+      medications, 
+      diagnosis, 
+      notes, 
+      expiresAt
     });
 
-    res.status(201).json({ success: true, prescription });
+    return sendSuccess(res, prescription, 'Prescription created successfully', 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -49,20 +63,23 @@ const createPrescription = async (req, res) => {
 const dispensePrescription = async (req, res) => {
   try {
     const prescription = await Prescription.findById(req.params.id);
-    if (!prescription) {
-      return res.status(404).json({ success: false, message: 'Prescription not found.' });
+    if (!prescription) return sendError(res, 'Prescription not found', 404);
+
+    // Security: Scope check
+    if (req.user.role !== 'SUPER_ADMIN' && prescription.organizationId?.toString() !== req.user.organizationId?.toString()) {
+      return sendError(res, 'Access denied', 403);
     }
 
-    // NEW: Subtract stock from Inventory
     if (prescription.status !== 'Dispensed') {
       for (const med of prescription.medications) {
-        // Find item in inventory by name (case-insensitive)
+        // Scoped inventory lookup
         const inventoryItem = await Inventory.findOne({ 
+          organizationId: prescription.organizationId,
           itemName: { $regex: new RegExp(`^${med.name}$`, 'i') } 
         });
 
         if (inventoryItem && inventoryItem.stockQuantity > 0) {
-          inventoryItem.stockQuantity -= 1; // Basic assumption: 1 unit per prescription
+          inventoryItem.stockQuantity -= 1;
           await inventoryItem.save();
         }
       }
@@ -75,13 +92,13 @@ const dispensePrescription = async (req, res) => {
 
     await logAction(
       req.user._id, 'DISPENSE', 'Prescription',
-      `Prescription ${req.params.id} dispensed by pharmacist ${req.user._id}`,
+      `Prescription ${req.params.id} dispensed`,
       'Info', req.ip
     );
 
-    res.status(200).json({ success: true, prescription });
+    return sendSuccess(res, prescription, 'Prescription dispensed successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 

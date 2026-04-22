@@ -39,21 +39,21 @@ export const ReceptionistDashboard = () => {
       appointmentAPI.getAll(),
       userAPI.getDoctors(),
       invoiceAPI.getAll(),
-      userAPI.getAll('Patient'),
+      userAPI.getAll('PATIENT'),
       inpatientAPI.getBeds(),
       inpatientAPI.getAdmissions(),
       inventoryAPI.getAll(),
       labAPI.getOrgAppointments()
     ]);
     return {
-      appointments: apptRes.data.appointments || [],
-      doctors: docsRes.data.doctors || [],
-      invoices: invRes.data.invoices || [],
-      allPatients: patientsRes.data.users || [],
-      beds: bedsRes.data.beds || [],
-      admissions: admissionsRes.data.admissions || [],
-      inventory: itemsRes.data.items || [],
-      labAppointments: labRes.data.labAppointments || []
+      appointments: apptRes.data.data || [],
+      doctors: docsRes.data.data || [],
+      invoices: invRes.data.data || [],
+      allPatients: patientsRes.data.data || [],
+      beds: bedsRes.data.data || [],
+      admissions: admissionsRes.data.data || [],
+      inventory: itemsRes.data.data || [],
+      labAppointments: labRes.data.data || []
     };
   };
 

@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const logger = require('./utils/logger');
+const User = require('./models/User.model');
 
 // Route imports
 const authRoutes = require('./routes/auth.routes');
@@ -40,10 +41,10 @@ app.use(morgan('combined', {
   stream: { write: (message) => logger.info(message.trim()) }
 }));
 
-// Rate-limit auth endpoints to prevent brute-force attacks
+// Rate-limit auth endpoints (relaxed for development)
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20,
+  windowMs: 15 * 60 * 1000, 
+  max: process.env.NODE_ENV === 'development' ? 1000 : 20,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Too many requests, please try again later.' }
@@ -68,7 +69,7 @@ app.use('/api/org', orgRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'HIMS API is running!' });
+  res.json({ status: 'ok', message: 'HIMS API is running!', env: process.env.NODE_ENV });
 });
 
 // Global error handler
@@ -87,8 +88,22 @@ const MONGO_URI = process.env.MONGO_URI;
 if (process.env.NODE_ENV !== 'test') {
   mongoose
     .connect(MONGO_URI)
-    .then(() => {
+    .then(async () => {
       logger.info('MongoDB connected successfully');
+      
+      // Auto-run seed if DB empty
+      const userCount = await User.countDocuments();
+      if (userCount === 0) {
+        logger.info('Database empty. Running seed script...');
+        try {
+          const { seedFullFlow } = require('./scripts/seedFullFlow');
+          await seedFullFlow();
+          logger.info('Seeding completed successfully');
+        } catch (seedError) {
+          logger.error('Auto-seeding failed', { error: seedError.message });
+        }
+      }
+
       app.listen(PORT, () => logger.info(`HIMS server running on http://localhost:${PORT}`));
     })
     .catch((err) => {

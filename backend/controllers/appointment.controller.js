@@ -1,5 +1,5 @@
 const Appointment = require('../models/Appointment.model');
-const User = require('../models/User.model');
+const { sendSuccess, sendError } = require('../utils/responseHelper');
 
 /**
  * @route   GET /api/appointments
@@ -8,37 +8,26 @@ const User = require('../models/User.model');
  */
 const getAppointments = async (req, res) => {
   try {
-    let query = {};
+    const query = {};
     const { role, _id } = req.user;
 
     if (role === 'SUPER_ADMIN') {
-      // no filter
+      // No filter for global scope
     } else if (role === 'PATIENT') {
       query.patient = _id;
     } else {
       // ORG_ADMIN, DOCTOR, NURSE, RECEPTIONIST, LAB_TECH
       query.organizationId = req.orgScope;
-      
-      // If doctor, only see their own appointments (optional depending on rules, but prompt says "their appointments", let's be broad to org unless specified, wait, doctors usually see org's or just theirs? "Organization Users: Must ONLY access: Appointments linked to their organization" - so broad org access is fine for now)
     }
 
-    const page  = Math.max(1, parseInt(req.query.page)  || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
-    const skip  = (page - 1) * limit;
+    const appointments = await Appointment.find(query)
+      .populate('patient', 'firstName lastName email phone')
+      .populate('doctor', 'firstName lastName specialty')
+      .sort({ date: -1 });
 
-    const [appointments, total] = await Promise.all([
-      Appointment.find(query)
-        .populate('patient', 'firstName lastName email phone')
-        .populate('doctor', 'firstName lastName specialty')
-        .sort({ date: -1 })
-        .skip(skip)
-        .limit(limit),
-      Appointment.countDocuments(query)
-    ]);
-
-    res.status(200).json({ success: true, count: appointments.length, total, page, pages: Math.ceil(total / limit), appointments });
+    return sendSuccess(res, appointments, `Found ${appointments.length} appointments`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -57,12 +46,10 @@ const createAppointment = async (req, res) => {
 
     if (role === 'PATIENT') {
       targetPatientId = req.user._id;
-      // Patient must provide an org they are booking for.
       if (!targetOrgId) {
-        return res.status(400).json({ success: false, message: 'organizationId is required.' });
+        return sendError(res, 'organizationId is required.', 400);
       }
     } else if (role !== 'SUPER_ADMIN') {
-      // Staff must book within their org
       targetOrgId = req.orgScope;
     }
 
@@ -73,12 +60,13 @@ const createAppointment = async (req, res) => {
       date, 
       startTime, 
       type, 
-      chiefComplaint
+      chiefComplaint,
+      createdBy: req.user._id
     });
 
-    res.status(201).json({ success: true, appointment });
+    return sendSuccess(res, appointment, 'Appointment created successfully', 201);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -89,34 +77,43 @@ const createAppointment = async (req, res) => {
  */
 const cancelAppointment = async (req, res) => {
   try {
+    const { reason } = req.body;
     const appointment = await Appointment.findById(req.params.id);
+    
     if (!appointment) {
-      return res.status(404).json({ success: false, message: 'Appointment not found.' });
+      return sendError(res, 'Appointment not found.', 404);
     }
 
     const role = req.user.role;
 
     // Strict Enforcement
-    if (role === 'PATIENT') {
-      if (appointment.patient.toString() !== req.user._id.toString()) {
-        return res.status(403).json({ success: false, message: 'Forbidden: You can only cancel your own appointments.' });
+    let isAuthorized = false;
+    if (role === 'SUPER_ADMIN') {
+      isAuthorized = true;
+    } else if (role === 'PATIENT') {
+      if (appointment.patient.toString() === req.user._id.toString()) {
+        isAuthorized = true;
       }
-    } else if (role !== 'SUPER_ADMIN') {
-      if (appointment.organizationId.toString() !== req.orgScope.toString()) {
-         return res.status(403).json({ success: false, message: 'Forbidden: Cannot cancel appointments outside your organization.' });
+    } else {
+      if (appointment.organizationId && appointment.organizationId.toString() === req.orgScope?.toString()) {
+        isAuthorized = true;
       }
+    }
+
+    if (!isAuthorized) {
+      return sendError(res, 'Not authorized to cancel this appointment', 403);
     }
 
     appointment.status = 'Cancelled';
     appointment.cancelledAt = new Date();
     appointment.cancelledBy = req.user._id;
-    appointment.cancelReason = req.body.reason || 'No reason provided';
+    appointment.cancelReason = reason || 'Cancelled by user';
 
     await appointment.save();
 
-    res.status(200).json({ success: true, message: 'Appointment cancelled successfully.', appointment });
+    return sendSuccess(res, appointment, 'Appointment cancelled successfully');
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
@@ -127,29 +124,30 @@ const cancelAppointment = async (req, res) => {
  */
 const updateAppointmentStatus = async (req, res) => {
   try {
+    const { status } = req.body;
     const appointment = await Appointment.findById(req.params.id);
+    
     if (!appointment) {
-      return res.status(404).json({ success: false, message: 'Appointment not found.' });
+      return sendError(res, 'Appointment not found.', 404);
     }
 
     // Role Enforcement
-    const role = req.user.role;
-    if (role === 'PATIENT') {
-       return res.status(403).json({ success: false, message: 'Patients cannot update status directly.' });
-    } else if (role !== 'SUPER_ADMIN') {
+    if (req.user.role === 'PATIENT') {
+       return sendError(res, 'Patients cannot update status directly.', 403);
+    } else if (req.user.role !== 'SUPER_ADMIN') {
        if (appointment.organizationId.toString() !== req.orgScope.toString()) {
-         return res.status(403).json({ success: false, message: 'Forbidden: Cannot update appointments outside your organization.' });
+         return sendError(res, 'Access denied: Outside your organization scope.', 403);
        }
     }
 
-    const { status } = req.body;
     appointment.status = status;
     if (status === 'Completed') appointment.completedAt = new Date();
 
     await appointment.save();
-    res.status(200).json({ success: true, appointment });
+    
+    return sendSuccess(res, appointment, `Appointment status updated to ${status}`);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return sendError(res, error.message);
   }
 };
 
