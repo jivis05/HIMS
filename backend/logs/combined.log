@@ -364,3 +364,8 @@
 {"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-22 15:15:19"}
 {"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-22 15:15:19"}
 {"error":"querySrv ECONNREFUSED _mongodb._tcp.cluster0.mxadwwa.mongodb.net","level":"error","message":"MongoDB connection failed","timestamp":"2026-04-22 15:26:24"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-22 16:27:00"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-22 16:27:00"}
+{"level":"info","message":"::1 - - [22/Apr/2026:10:57:15 +0000] \"POST /api/auth/login HTTP/1.1\" 200 483 \"-\" \"-\"","timestamp":"2026-04-22 16:27:15"}
+{"level":"info","message":"::1 - - [22/Apr/2026:10:57:41 +0000] \"POST /api/auth/login HTTP/1.1\" 200 396 \"-\" \"-\"","timestamp":"2026-04-22 16:27:41"}
+{"level":"info","message":"::1 - - [22/Apr/2026:11:00:27 +0000] \"POST /api/auth/login HTTP/1.1\" 200 396 \"-\" \"-\"","timestamp":"2026-04-22 16:30:27"}

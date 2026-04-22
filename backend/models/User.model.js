@@ -9,8 +9,9 @@ const userSchema = new mongoose.Schema(
     password:  { type: String, required: true, minlength: 6, select: false },
     role: {
       type: String,
-      enum: ['SUPER_ADMIN', 'ORG_ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST', 'LAB_TECH', 'PATIENT'],
-      default: 'PATIENT'
+      enum: ['SUPER_ADMIN', 'ORG_ADMIN', 'HOSPITAL_ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST', 'LAB_TECHNICIAN', 'PHARMACIST', 'PATIENT'],
+      default: 'PATIENT',
+      uppercase: true
     },
     organizationId: {
       type: mongoose.Schema.Types.ObjectId,
