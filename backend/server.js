@@ -27,6 +27,7 @@ const orgRoutes = require('./routes/org.routes');
 const labRoutes = require('./routes/lab.routes');
 
 const app = express();
+app.set('trust proxy', 1); // Trust first proxy (Render)
 
 // Security headers
 app.use(helmet());
