@@ -27,10 +27,13 @@ export const Login = () => {
     setError('');
     setIsLoading(true);
     try {
+      console.log(`[FRONTEND LOGIN] Attempting login for email: ${email}`);
       const user = await login(email, password);
-      const redirectPath = ROLE_REDIRECTS[user.role] || '/dashboard';
+      console.log(`[FRONTEND LOGIN] Success. User:`, user);
+      const redirectPath = ROLE_REDIRECTS[user.role.toUpperCase()] || '/dashboard';
       navigate(redirectPath, { replace: true });
     } catch (err) {
+      console.error(`[FRONTEND LOGIN ERROR]`, err.response?.data || err.message);
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);

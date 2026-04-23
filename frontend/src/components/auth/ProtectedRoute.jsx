@@ -29,7 +29,7 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   // Logged in but not the right role → 403 Forbidden view
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && !allowedRoles.some(role => role.toUpperCase() === user.role.toUpperCase())) {
     return (
       <div className="min-h-screen bg-surface flex flex-col items-center justify-center space-y-4 p-8">
         <span className="material-symbols-outlined text-6xl text-accent-error">gpp_bad</span>

@@ -11,23 +11,25 @@ const Sidebar = () => {
     : '?';
 
   const filteredLinks = sidebarLinks.filter(link => {
+    const userRole = user?.role?.toUpperCase() || '';
+    
     // Platform-wide management
-    if (link.id === 'superadmin') return user?.role === 'SUPER_ADMIN';
-    if (link.id === 'admin') return user?.role === 'HOSPITAL_ADMIN' || user?.role === 'SUPER_ADMIN';
+    if (link.id === 'superadmin') return userRole === 'SUPER_ADMIN';
+    if (link.id === 'admin') return userRole === 'HOSPITAL_ADMIN' || userRole === 'SUPER_ADMIN';
     
     // Clinical & Administrative roles
-    if (link.id === 'doctor') return user?.role === 'DOCTOR';
-    if (link.id === 'nurse') return user?.role === 'NURSE';
-    if (link.id === 'reception') return user?.role === 'RECEPTIONIST' || user?.role === 'HOSPITAL_ADMIN';
-    if (link.id === 'pharmacy') return user?.role === 'PHARMACIST' || user?.role === 'HOSPITAL_ADMIN';
-    if (link.id === 'lab') return user?.role === 'LAB_TECHNICIAN' || user?.role === 'DOCTOR' || user?.role === 'HOSPITAL_ADMIN';
-    if (link.id === 'bloodbank') return user?.role === 'LAB_TECHNICIAN' || user?.role === 'HOSPITAL_ADMIN';
+    if (link.id === 'doctor') return userRole === 'DOCTOR';
+    if (link.id === 'nurse') return userRole === 'NURSE';
+    if (link.id === 'reception') return userRole === 'RECEPTIONIST' || userRole === 'HOSPITAL_ADMIN';
+    if (link.id === 'pharmacy') return userRole === 'PHARMACIST' || userRole === 'HOSPITAL_ADMIN';
+    if (link.id === 'lab') return userRole === 'LAB_TECH' || userRole === 'LAB_TECHNICIAN' || userRole === 'DOCTOR' || userRole === 'HOSPITAL_ADMIN';
+    if (link.id === 'bloodbank') return userRole === 'LAB_TECH' || userRole === 'LAB_TECHNICIAN' || userRole === 'HOSPITAL_ADMIN';
     
     // Patient access
-    if (link.id === 'patient') return user?.role === 'PATIENT';
+    if (link.id === 'patient') return userRole === 'PATIENT';
     
     // Organization management (Tenant specific)
-    if (link.id === 'org' || link.id === 'org-staff') return user?.role === 'ORG_ADMIN';
+    if (link.id === 'org' || link.id === 'org-staff') return userRole === 'ORG_ADMIN';
     
     return true; // Default show if no specific rule (like Profile)
   });
