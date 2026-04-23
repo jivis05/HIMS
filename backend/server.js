@@ -95,7 +95,7 @@ if (process.env.NODE_ENV !== 'test') {
   mongoose
     .connect(MONGO_URI)
     .then(async () => {
-      logger.info('MongoDB connected successfully');
+      logger.info(`MongoDB connected successfully to host: ${mongoose.connection.host}, database: ${mongoose.connection.name}`);
       
       // Auto-run seed if DB empty
       const userCount = await User.countDocuments();
