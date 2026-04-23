@@ -71,14 +71,26 @@ const register = async (req, res) => {
  */
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
 
     if (!email || !password) {
       return sendError(res, 'Please provide email and password.', 400);
     }
 
+    email = email.toLowerCase().trim();
+
     const user = await User.findOne({ email }).select('+password');
-    if (!user || !(await user.matchPassword(password))) {
+    console.log(`[LOGIN ATTEMPT] Email: ${email}`);
+    if (!user) {
+      console.log(`[LOGIN FAILED] User not found for email: ${email}`);
+      return sendError(res, 'Invalid email or password.', 401);
+    }
+
+    const isMatch = await user.matchPassword(password);
+    console.log(`[LOGIN DEBUG] Password match result: ${isMatch}`);
+
+    if (!isMatch) {
+      console.log(`[LOGIN FAILED] Password mismatch for email: ${email}`);
       return sendError(res, 'Invalid email or password.', 401);
     }
 
