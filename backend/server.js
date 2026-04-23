@@ -31,8 +31,14 @@ const app = express();
 // Security headers
 app.use(helmet());
 
-// CORS — allow the configured frontend origin (never hardcoded to localhost only)
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+// CORS — allow the configured frontend origin
+const allowedOrigin = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+app.use(cors({ 
+  origin: allowedOrigin,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 

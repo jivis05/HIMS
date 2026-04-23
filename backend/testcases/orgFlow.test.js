@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const app = require('../server');
 const Organization = require('../models/Organization.model');
 const User = require('../models/User.model');
+const TEST_PASSWORD = process.env.SEED_PASSWORD;
+if (!TEST_PASSWORD) {
+  throw new Error('SEED_PASSWORD is not defined in .env. Tests aborted for security.');
+}
 
 describe('Organization & Staff Management Flow', () => {
   let adminToken;
@@ -33,7 +37,7 @@ describe('Organization & Staff Management Flow', () => {
         adminFirstName: 'Test',
         adminLastName: 'Admin',
         adminEmail: 'testadmin@org.com',
-        adminPassword: 'Password123'
+        adminPassword: TEST_PASSWORD
       });
 
     expect(res.statusCode).toEqual(201);
@@ -47,7 +51,7 @@ describe('Organization & Staff Management Flow', () => {
       .post('/api/auth/login')
       .send({
         email: 'testadmin@org.com',
-        password: 'Password123'
+        password: TEST_PASSWORD
       });
     
     adminToken = loginRes.body.data.token;
@@ -59,7 +63,7 @@ describe('Organization & Staff Management Flow', () => {
         firstName: 'Doctor',
         lastName: 'Strange',
         email: 'strange@org.com',
-        password: 'Password123',
+        password: TEST_PASSWORD,
         role: 'DOCTOR' // Normalized role
       });
 
@@ -74,7 +78,7 @@ describe('Organization & Staff Management Flow', () => {
         firstName: 'Illegal',
         lastName: 'Doctor',
         email: 'illegal@org.com',
-        password: 'Password123',
+        password: TEST_PASSWORD,
         role: 'DOCTOR' // Normalized role
       });
 
@@ -92,7 +96,7 @@ describe('Organization & Staff Management Flow', () => {
         firstName: 'Meredith',
         lastName: 'Grey',
         email: 'meredith@org.com',
-        password: 'Password123',
+        password: TEST_PASSWORD,
         role: 'DOCTOR', // Normalized role
         specialty: 'Surgery'
       });
@@ -108,3 +112,4 @@ describe('Organization & Staff Management Flow', () => {
     expect(hasMeredith).toBe(true);
   });
 });
+

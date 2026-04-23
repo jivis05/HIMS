@@ -9,7 +9,10 @@ describe('Super Admin Workflow & Organization Verification', () => {
   let orgAdminToken;
   let orgId;
   let doctorEmail = 'test.doc@test.com';
-  const TEST_PASSWORD = process.env.SEED_PASSWORD || 'YOUR_SECURE_PASSWORD';
+  const TEST_PASSWORD = process.env.SEED_PASSWORD;
+  if (!TEST_PASSWORD) {
+    throw new Error('SEED_PASSWORD is not defined in .env. Tests aborted for security.');
+  }
 
   beforeAll(async () => {
     if (mongoose.connection.readyState === 0) {

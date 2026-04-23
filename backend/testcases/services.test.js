@@ -6,6 +6,10 @@ const Organization = require('../models/Organization.model');
 const BloodDonor = require('../models/BloodDonor');
 const BloodStock = require('../models/BloodStock');
 const LabReport = require('../models/LabReport.model');
+const TEST_PASSWORD = process.env.SEED_PASSWORD;
+if (!TEST_PASSWORD) {
+  throw new Error('SEED_PASSWORD is not defined in .env. Tests aborted for security.');
+}
 
 describe('Specialized Services (Blood Bank & Lab)', () => {
   let adminToken;
@@ -33,7 +37,7 @@ describe('Specialized Services (Blood Bank & Lab)', () => {
         firstName: 'S',
         lastName: 'Patient',
         email: 'spatient@gmail.com',
-        password: 'Password123',
+        password: TEST_PASSWORD,
         role: 'PATIENT'
       });
     patientId = pRes.body.data.user.id;
@@ -49,7 +53,7 @@ describe('Specialized Services (Blood Bank & Lab)', () => {
         adminFirstName: 'S',
         adminLastName: 'Admin',
         adminEmail: 'sadmin@org.com',
-        adminPassword: 'Password123'
+        adminPassword: TEST_PASSWORD
       });
     
     if (orgRes.statusCode !== 201) console.log('ORG REG FAIL:', JSON.stringify(orgRes.body, null, 2));
@@ -59,7 +63,7 @@ describe('Specialized Services (Blood Bank & Lab)', () => {
     // Login Admin
     const loginRes = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'sadmin@org.com', password: 'Password123' });
+      .send({ email: 'sadmin@org.com', password: TEST_PASSWORD });
     adminToken = loginRes.body.data.token;
 
     // Create Lab Tech
@@ -70,13 +74,13 @@ describe('Specialized Services (Blood Bank & Lab)', () => {
         firstName: 'S',
         lastName: 'Tech',
         email: 'stech@org.com',
-        password: 'Password123',
+        password: TEST_PASSWORD,
         role: 'LAB_TECH'
       });
     
     const techLoginRes = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'stech@org.com', password: 'Password123' });
+      .send({ email: 'stech@org.com', password: TEST_PASSWORD });
     labTechToken = techLoginRes.body.data.token;
   });
 
@@ -117,7 +121,7 @@ describe('Specialized Services (Blood Bank & Lab)', () => {
   test('4. Should book a lab appointment as patient', async () => {
     const pLogin = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'spatient@gmail.com', password: 'Password123' });
+      .send({ email: 'spatient@gmail.com', password: TEST_PASSWORD });
     const pToken = pLogin.body.data.token;
 
     const res = await request(app)
@@ -145,3 +149,4 @@ describe('Specialized Services (Blood Bank & Lab)', () => {
     expect(res.body.data.length).toBeGreaterThanOrEqual(1);
   });
 });
+

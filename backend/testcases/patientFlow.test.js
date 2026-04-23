@@ -33,7 +33,7 @@ describe('Patient & Appointment Workflow', () => {
         firstName: 'Test',
         lastName: 'Patient',
         email: 'testpatient@gmail.com',
-        password: 'Password123',
+        password: TEST_PASSWORD,
         role: 'PATIENT'
       });
 
@@ -75,7 +75,7 @@ describe('Patient & Appointment Workflow', () => {
         firstName: 'P',
         lastName: 'Doctor',
         email: 'pdoctor@org.com',
-        password: 'Password123',
+        password: TEST_PASSWORD,
         role: 'DOCTOR',
         specialty: 'General'
       });
@@ -132,3 +132,4 @@ describe('Patient & Appointment Workflow', () => {
     expect(res.body.data.status).toBe('Cancelled');
   });
 });
+
