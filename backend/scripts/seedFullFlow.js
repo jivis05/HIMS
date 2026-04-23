@@ -16,6 +16,10 @@ const Log = require('../models/Log');
 
 const seedFullFlow = async () => {
   try {
+    const PASSWORD = process.env.SEED_PASSWORD;
+    if (!PASSWORD) {
+      throw new Error('SEED_PASSWORD is not defined in .env. Seeding aborted for security.');
+    }
     console.log('[SEED] Starting full system seed...');
 
     // 1. Clear existing data
@@ -43,7 +47,7 @@ const seedFullFlow = async () => {
       firstName: 'System',
       lastName: 'Administrator',
       email: 'superadmin@hims.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'SUPER_ADMIN',
       isApproved: true
     });
@@ -64,7 +68,7 @@ const seedFullFlow = async () => {
       firstName: 'Alice',
       lastName: 'Admin',
       email: 'admin@citygeneral.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'ORG_ADMIN',
       organizationId: org1._id,
       isApproved: true
@@ -77,7 +81,7 @@ const seedFullFlow = async () => {
       firstName: 'Gregory',
       lastName: 'House',
       email: 'doctor@citygeneral.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'DOCTOR',
       specialty: 'Diagnostic Medicine',
       organizationId: org1._id,
@@ -88,7 +92,7 @@ const seedFullFlow = async () => {
       firstName: 'Jackie',
       lastName: 'Peyton',
       email: 'nurse@citygeneral.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'NURSE',
       organizationId: org1._id,
       isApproved: true
@@ -98,7 +102,7 @@ const seedFullFlow = async () => {
       firstName: 'Dexter',
       lastName: 'Morgan',
       email: 'labtech@citygeneral.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'LAB_TECH',
       organizationId: org1._id,
       isApproved: true
@@ -108,7 +112,7 @@ const seedFullFlow = async () => {
       firstName: 'Pam',
       lastName: 'Beesly',
       email: 'receptionist@citygeneral.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'RECEPTIONIST',
       organizationId: org1._id,
       isApproved: true
@@ -119,7 +123,7 @@ const seedFullFlow = async () => {
       firstName: 'Arthur',
       lastName: 'Morgan',
       email: 'arthur@patient.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'PATIENT',
       isApproved: true
     });
@@ -128,7 +132,7 @@ const seedFullFlow = async () => {
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@patient.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'PATIENT',
       isApproved: true
     });

@@ -18,7 +18,10 @@ const getPrescriptions = async (req, res) => {
     }
 
     if (req.user.role === 'PATIENT') query.patient = req.user._id;
-    else if (req.user.role === 'DOCTOR') query.doctor = req.user._id;
+    else if (req.user.role === 'DOCTOR') {
+      query.doctor = req.user._id;
+      if (req.query.patient) query.patient = req.query.patient;
+    }
 
     const prescriptions = await Prescription.find(query)
       .populate('patient', 'firstName lastName')

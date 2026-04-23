@@ -254,7 +254,7 @@ export const ReceptionistDashboard = () => {
             <div className="flex-1 clinical-card p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold font-display">Today's Check-ins & Waitlist</h3>
-                <button onClick={fetchData} className="text-primary hover:text-primary-hover font-semibold text-sm flex items-center gap-1">
+                <button onClick={refetch} className="text-primary hover:text-primary-hover font-semibold text-sm flex items-center gap-1">
                   <span className="material-symbols-outlined text-sm">refresh</span> Refresh List
                 </button>
               </div>
@@ -519,7 +519,7 @@ export const ReceptionistDashboard = () => {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-2xl font-bold font-display text-slate-800">Lab & Diagnostics</h3>
-              <button onClick={fetchDashboardData} className="text-sm text-primary hover:text-primary-hover font-bold flex items-center gap-1">
+              <button onClick={refetch} className="text-sm text-primary hover:text-primary-hover font-bold flex items-center gap-1">
                  <span className="material-symbols-outlined text-sm">refresh</span> Refresh
               </button>
             </div>

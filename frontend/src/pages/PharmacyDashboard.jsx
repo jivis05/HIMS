@@ -14,8 +14,8 @@ export const PharmacyDashboard = () => {
         prescriptionAPI.getAll(),
         inventoryAPI.getLowStock()
       ]);
-      setPrescriptions(rxRes.data.prescriptions || []);
-      setLowStockItems(lowStockRes.data.items || []);
+      setPrescriptions(rxRes.data.data || []);
+      setLowStockItems(lowStockRes.data.data || []);
     } catch (error) {
       console.error('Error fetching prescriptions:', error);
     } finally {

@@ -26,8 +26,8 @@ export const BloodBankDashboard = () => {
         bloodBankAPI.getStock(),
         bloodBankAPI.getDonors()
       ]);
-      setStock(stockRes.data.stock || []);
-      setDonors(donorsRes.data.donors || []);
+      setStock(stockRes.data.data || []);
+      setDonors(donorsRes.data.data || []);
     } catch (error) {
       console.error('Error fetching blood bank data', error);
     } finally {

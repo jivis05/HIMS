@@ -846,3 +846,355 @@
 {"level":"info","message":"::1 - - [22/Apr/2026:17:55:57 +0000] \"GET /api/auth/me HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-22 23:25:57"}
 {"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-22 23:26:24"}
 {"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-22 23:26:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:14 +0000] \"POST /api/auth/login HTTP/1.1\" 200 411 \"-\" \"-\"","timestamp":"2026-04-23 00:47:14"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:15 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 00:47:15"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:15 +0000] \"POST /api/auth/login HTTP/1.1\" 200 488 \"-\" \"-\"","timestamp":"2026-04-23 00:47:15"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:15 +0000] \"POST /api/org/users HTTP/1.1\" 403 99 \"-\" \"-\"","timestamp":"2026-04-23 00:47:15"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:15 +0000] \"GET /api/superadmin/orgs HTTP/1.1\" 200 1707 \"-\" \"-\"","timestamp":"2026-04-23 00:47:15"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:16 +0000] \"PATCH /api/superadmin/orgs/69e91ebba3b09e15d2e04376/verify HTTP/1.1\" 200 404 \"-\" \"-\"","timestamp":"2026-04-23 00:47:16"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:16 +0000] \"POST /api/org/users HTTP/1.1\" 201 489 \"-\" \"-\"","timestamp":"2026-04-23 00:47:16"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:16 +0000] \"GET /api/superadmin/logs HTTP/1.1\" 403 97 \"-\" \"-\"","timestamp":"2026-04-23 00:47:16"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:18 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 00:47:18"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:18 +0000] \"POST /api/auth/login HTTP/1.1\" 200 491 \"-\" \"-\"","timestamp":"2026-04-23 00:47:18"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:18 +0000] \"POST /api/org/users HTTP/1.1\" 403 99 \"-\" \"-\"","timestamp":"2026-04-23 00:47:18"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:19 +0000] \"POST /api/auth/register HTTP/1.1\" 403 85 \"-\" \"-\"","timestamp":"2026-04-23 00:47:19"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:19 +0000] \"POST /api/org/users HTTP/1.1\" 201 490 \"-\" \"-\"","timestamp":"2026-04-23 00:47:19"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:17:19 +0000] \"GET /api/users/doctors HTTP/1.1\" 200 472 \"-\" \"-\"","timestamp":"2026-04-23 00:47:19"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:18:19 +0000] \"POST /api/auth/register HTTP/1.1\" 201 416 \"-\" \"-\"","timestamp":"2026-04-23 00:48:19"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:18:20 +0000] \"POST /api/org/register HTTP/1.1\" 201 248 \"-\" \"-\"","timestamp":"2026-04-23 00:48:20"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:18:20 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:48:20"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:18:20 +0000] \"POST /api/org/users HTTP/1.1\" 400 128 \"-\" \"-\"","timestamp":"2026-04-23 00:48:20"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:18:20 +0000] \"POST /api/auth/login HTTP/1.1\" 200 409 \"-\" \"-\"","timestamp":"2026-04-23 00:48:20"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:18:20 +0000] \"POST /api/appointment HTTP/1.1\" 404 155 \"-\" \"-\"","timestamp":"2026-04-23 00:48:20"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:18:20 +0000] \"GET /api/appointment HTTP/1.1\" 404 154 \"-\" \"-\"","timestamp":"2026-04-23 00:48:20"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:18:20 +0000] \"PATCH /api/appointment/undefined/status HTTP/1.1\" 404 173 \"-\" \"-\"","timestamp":"2026-04-23 00:48:20"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:19:04 +0000] \"POST /api/auth/register HTTP/1.1\" 201 416 \"-\" \"-\"","timestamp":"2026-04-23 00:49:04"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:19:04 +0000] \"POST /api/org/register HTTP/1.1\" 201 248 \"-\" \"-\"","timestamp":"2026-04-23 00:49:04"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:19:04 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:49:04"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:19:05 +0000] \"POST /api/org/users HTTP/1.1\" 201 484 \"-\" \"-\"","timestamp":"2026-04-23 00:49:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:19:05 +0000] \"POST /api/auth/login HTTP/1.1\" 200 409 \"-\" \"-\"","timestamp":"2026-04-23 00:49:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:19:05 +0000] \"POST /api/appointments HTTP/1.1\" 403 95 \"-\" \"-\"","timestamp":"2026-04-23 00:49:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:19:05 +0000] \"GET /api/appointments HTTP/1.1\" 200 59 \"-\" \"-\"","timestamp":"2026-04-23 00:49:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:19:05 +0000] \"PATCH /api/appointments/undefined/status HTTP/1.1\" 403 95 \"-\" \"-\"","timestamp":"2026-04-23 00:49:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:20:27 +0000] \"POST /api/auth/register HTTP/1.1\" 201 416 \"-\" \"-\"","timestamp":"2026-04-23 00:50:27"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:20:28 +0000] \"POST /api/org/register HTTP/1.1\" 201 248 \"-\" \"-\"","timestamp":"2026-04-23 00:50:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:20:28 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:50:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:20:29 +0000] \"POST /api/org/users HTTP/1.1\" 201 484 \"-\" \"-\"","timestamp":"2026-04-23 00:50:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:20:29 +0000] \"POST /api/auth/login HTTP/1.1\" 200 409 \"-\" \"-\"","timestamp":"2026-04-23 00:50:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:20:29 +0000] \"POST /api/appointments HTTP/1.1\" 201 443 \"-\" \"-\"","timestamp":"2026-04-23 00:50:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:20:29 +0000] \"GET /api/appointments HTTP/1.1\" 200 579 \"-\" \"-\"","timestamp":"2026-04-23 00:50:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:20:29 +0000] \"PATCH /api/appointments/69e91f7dc58d86561f338f7d/cancel HTTP/1.1\" 200 560 \"-\" \"-\"","timestamp":"2026-04-23 00:50:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:05 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:51:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:06 +0000] \"POST /api/org/register HTTP/1.1\" 201 241 \"-\" \"-\"","timestamp":"2026-04-23 00:51:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:06 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:51:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:06 +0000] \"POST /api/invoices HTTP/1.1\" 400 72 \"-\" \"-\"","timestamp":"2026-04-23 00:51:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:06 +0000] \"POST /api/invoices/undefined/payment HTTP/1.1\" 500 141 \"-\" \"-\"","timestamp":"2026-04-23 00:51:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:06 +0000] \"POST /api/invoices/undefined/payment HTTP/1.1\" 500 141 \"-\" \"-\"","timestamp":"2026-04-23 00:51:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:06 +0000] \"GET /api/invoices HTTP/1.1\" 200 97 \"-\" \"-\"","timestamp":"2026-04-23 00:51:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:50 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:51:50"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:50 +0000] \"POST /api/org/register HTTP/1.1\" 201 241 \"-\" \"-\"","timestamp":"2026-04-23 00:51:50"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:51 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:51:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:51 +0000] \"POST /api/invoices HTTP/1.1\" 201 612 \"-\" \"-\"","timestamp":"2026-04-23 00:51:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:51 +0000] \"POST /api/invoices/69e91fcfaf866c41698001b8/payment HTTP/1.1\" 200 754 \"-\" \"-\"","timestamp":"2026-04-23 00:51:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:51 +0000] \"POST /api/invoices/69e91fcfaf866c41698001b8/payment HTTP/1.1\" 200 889 \"-\" \"-\"","timestamp":"2026-04-23 00:51:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:21:52 +0000] \"GET /api/invoices HTTP/1.1\" 200 1037 \"-\" \"-\"","timestamp":"2026-04-23 00:51:52"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:22:31 +0000] \"POST /api/org/register HTTP/1.1\" 201 239 \"-\" \"-\"","timestamp":"2026-04-23 00:52:31"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:22:31 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:52:31"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:22:32 +0000] \"POST /api/org/users HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 00:52:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:22:32 +0000] \"POST /api/shifts HTTP/1.1\" 201 419 \"-\" \"-\"","timestamp":"2026-04-23 00:52:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:22:32 +0000] \"GET /api/shifts HTTP/1.1\" 200 493 \"-\" \"-\"","timestamp":"2026-04-23 00:52:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:22:32 +0000] \"POST /api/inventory HTTP/1.1\" 201 398 \"-\" \"-\"","timestamp":"2026-04-23 00:52:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:22:32 +0000] \"PATCH /api/inventory/69e91ff807c224ac4280080b/stock HTTP/1.1\" 500 165 \"-\" \"-\"","timestamp":"2026-04-23 00:52:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:22:59 +0000] \"POST /api/org/register HTTP/1.1\" 201 239 \"-\" \"-\"","timestamp":"2026-04-23 00:52:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:00 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:53:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:00 +0000] \"POST /api/org/users HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 00:53:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:00 +0000] \"POST /api/shifts HTTP/1.1\" 201 419 \"-\" \"-\"","timestamp":"2026-04-23 00:53:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:01 +0000] \"GET /api/shifts HTTP/1.1\" 200 493 \"-\" \"-\"","timestamp":"2026-04-23 00:53:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:01 +0000] \"POST /api/inventory HTTP/1.1\" 201 398 \"-\" \"-\"","timestamp":"2026-04-23 00:53:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:01 +0000] \"PATCH /api/inventory/69e9201564eaef03f6d3cc78/stock HTTP/1.1\" 200 390 \"-\" \"-\"","timestamp":"2026-04-23 00:53:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:33 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:53:33"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:34 +0000] \"POST /api/org/register HTTP/1.1\" 500 135 \"-\" \"-\"","timestamp":"2026-04-23 00:53:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:34 +0000] \"POST /api/bloodbank/donors HTTP/1.1\" 401 63 \"-\" \"-\"","timestamp":"2026-04-23 00:53:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:34 +0000] \"POST /api/bloodbank/stock HTTP/1.1\" 401 63 \"-\" \"-\"","timestamp":"2026-04-23 00:53:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:34 +0000] \"POST /api/auth/login HTTP/1.1\" 200 403 \"-\" \"-\"","timestamp":"2026-04-23 00:53:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:34 +0000] \"POST /api/lab/book HTTP/1.1\" 403 86 \"-\" \"-\"","timestamp":"2026-04-23 00:53:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:23:34 +0000] \"GET /api/lab/org-appointments HTTP/1.1\" 401 63 \"-\" \"-\"","timestamp":"2026-04-23 00:53:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:24:59 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:54:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:24:59 +0000] \"POST /api/org/register HTTP/1.1\" 500 135 \"-\" \"-\"","timestamp":"2026-04-23 00:54:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:24:59 +0000] \"POST /api/auth/login HTTP/1.1\" 401 68 \"-\" \"-\"","timestamp":"2026-04-23 00:54:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:24:59 +0000] \"POST /api/bloodbank/donors HTTP/1.1\" 401 63 \"-\" \"-\"","timestamp":"2026-04-23 00:54:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:24:59 +0000] \"POST /api/bloodbank/stock HTTP/1.1\" 401 63 \"-\" \"-\"","timestamp":"2026-04-23 00:54:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:00 +0000] \"POST /api/auth/login HTTP/1.1\" 200 403 \"-\" \"-\"","timestamp":"2026-04-23 00:55:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:00 +0000] \"POST /api/lab/book HTTP/1.1\" 403 86 \"-\" \"-\"","timestamp":"2026-04-23 00:55:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:00 +0000] \"GET /api/lab/org-appointments HTTP/1.1\" 401 63 \"-\" \"-\"","timestamp":"2026-04-23 00:55:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:23 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:55:23"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:24 +0000] \"POST /api/org/register HTTP/1.1\" 201 238 \"-\" \"-\"","timestamp":"2026-04-23 00:55:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:24 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:55:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:24 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 00:55:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:24 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 00:55:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:25 +0000] \"POST /api/bloodbank/donors HTTP/1.1\" 201 454 \"-\" \"-\"","timestamp":"2026-04-23 00:55:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:25 +0000] \"POST /api/bloodbank/stock HTTP/1.1\" 404 84 \"-\" \"-\"","timestamp":"2026-04-23 00:55:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:25 +0000] \"POST /api/auth/login HTTP/1.1\" 200 403 \"-\" \"-\"","timestamp":"2026-04-23 00:55:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:25 +0000] \"POST /api/lab/book HTTP/1.1\" 403 86 \"-\" \"-\"","timestamp":"2026-04-23 00:55:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:25 +0000] \"GET /api/lab/org-appointments HTTP/1.1\" 200 46 \"-\" \"-\"","timestamp":"2026-04-23 00:55:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:25:59 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:55:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:00 +0000] \"POST /api/org/register HTTP/1.1\" 201 238 \"-\" \"-\"","timestamp":"2026-04-23 00:56:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:00 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:56:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:00 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 00:56:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:01 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 00:56:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:01 +0000] \"POST /api/bloodbank/donors HTTP/1.1\" 201 454 \"-\" \"-\"","timestamp":"2026-04-23 00:56:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:01 +0000] \"POST /api/bloodbank/stock HTTP/1.1\" 404 84 \"-\" \"-\"","timestamp":"2026-04-23 00:56:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:01 +0000] \"POST /api/auth/login HTTP/1.1\" 200 403 \"-\" \"-\"","timestamp":"2026-04-23 00:56:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:01 +0000] \"POST /api/lab/book HTTP/1.1\" 201 408 \"-\" \"-\"","timestamp":"2026-04-23 00:56:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:01 +0000] \"GET /api/lab/org-appointments HTTP/1.1\" 200 456 \"-\" \"-\"","timestamp":"2026-04-23 00:56:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:30 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:56:30"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:30 +0000] \"POST /api/org/register HTTP/1.1\" 201 238 \"-\" \"-\"","timestamp":"2026-04-23 00:56:30"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:31 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:56:31"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:31 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 00:56:31"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:31 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 00:56:31"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:32 +0000] \"POST /api/bloodbank/donors HTTP/1.1\" 201 454 \"-\" \"-\"","timestamp":"2026-04-23 00:56:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:32 +0000] \"GET /api/bloodbank/stock HTTP/1.1\" 200 1730 \"-\" \"-\"","timestamp":"2026-04-23 00:56:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:32 +0000] \"POST /api/bloodbank/stock HTTP/1.1\" 200 277 \"-\" \"-\"","timestamp":"2026-04-23 00:56:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:32 +0000] \"POST /api/auth/login HTTP/1.1\" 200 403 \"-\" \"-\"","timestamp":"2026-04-23 00:56:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:32 +0000] \"POST /api/lab/book HTTP/1.1\" 201 408 \"-\" \"-\"","timestamp":"2026-04-23 00:56:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:26:33 +0000] \"GET /api/lab/org-appointments HTTP/1.1\" 200 456 \"-\" \"-\"","timestamp":"2026-04-23 00:56:33"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:24 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:57:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:24 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 00:57:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:25 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:57:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:25 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 00:57:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:25 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 00:57:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:26 +0000] \"POST /api/prescriptions HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 00:57:26"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:26 +0000] \"GET /api/prescriptions/patient/69e9211c36dae0d6705d1e4c HTTP/1.1\" 404 189 \"-\" \"-\"","timestamp":"2026-04-23 00:57:26"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:26 +0000] \"POST /api/inpatient/beds HTTP/1.1\" 201 379 \"-\" \"-\"","timestamp":"2026-04-23 00:57:26"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:26 +0000] \"GET /api/inpatient/beds HTTP/1.1\" 200 369 \"-\" \"-\"","timestamp":"2026-04-23 00:57:26"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:26 +0000] \"POST /api/inpatient/admissions HTTP/1.1\" 201 426 \"-\" \"-\"","timestamp":"2026-04-23 00:57:26"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:53 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 00:57:53"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:53 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 00:57:53"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:53 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 00:57:53"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:54 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 00:57:54"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:54 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 00:57:54"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:54 +0000] \"POST /api/prescriptions HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 00:57:54"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:54 +0000] \"GET /api/prescriptions?patient=69e921388c662a6a1178ce16 HTTP/1.1\" 200 565 \"-\" \"-\"","timestamp":"2026-04-23 00:57:54"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:54 +0000] \"POST /api/inpatient/beds HTTP/1.1\" 201 379 \"-\" \"-\"","timestamp":"2026-04-23 00:57:54"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:55 +0000] \"GET /api/inpatient/beds HTTP/1.1\" 200 369 \"-\" \"-\"","timestamp":"2026-04-23 00:57:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:27:55 +0000] \"POST /api/inpatient/admissions HTTP/1.1\" 201 426 \"-\" \"-\"","timestamp":"2026-04-23 00:57:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:50 +0000] \"POST /api/auth/login HTTP/1.1\" 200 411 \"-\" \"-\"","timestamp":"2026-04-23 01:04:50"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:51 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:04:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:51 +0000] \"POST /api/auth/login HTTP/1.1\" 200 488 \"-\" \"-\"","timestamp":"2026-04-23 01:04:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:51 +0000] \"POST /api/org/users HTTP/1.1\" 403 99 \"-\" \"-\"","timestamp":"2026-04-23 01:04:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:51 +0000] \"GET /api/superadmin/orgs HTTP/1.1\" 200 3702 \"-\" \"-\"","timestamp":"2026-04-23 01:04:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:51 +0000] \"PATCH /api/superadmin/orgs/69e922db881898ebbc30f7e0/verify HTTP/1.1\" 200 404 \"-\" \"-\"","timestamp":"2026-04-23 01:04:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:52 +0000] \"POST /api/org/users HTTP/1.1\" 201 489 \"-\" \"-\"","timestamp":"2026-04-23 01:04:52"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:52 +0000] \"GET /api/superadmin/logs HTTP/1.1\" 403 97 \"-\" \"-\"","timestamp":"2026-04-23 01:04:52"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:55 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:04:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:55 +0000] \"POST /api/org/register HTTP/1.1\" 201 238 \"-\" \"-\"","timestamp":"2026-04-23 01:04:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:56 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:04:56"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:56 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 01:04:56"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:56 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 01:04:56"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:57 +0000] \"POST /api/bloodbank/donors HTTP/1.1\" 201 454 \"-\" \"-\"","timestamp":"2026-04-23 01:04:57"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:57 +0000] \"GET /api/bloodbank/stock HTTP/1.1\" 500 149 \"-\" \"-\"","timestamp":"2026-04-23 01:04:57"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:57 +0000] \"POST /api/bloodbank/stock HTTP/1.1\" 404 84 \"-\" \"-\"","timestamp":"2026-04-23 01:04:57"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:57 +0000] \"POST /api/auth/login HTTP/1.1\" 200 403 \"-\" \"-\"","timestamp":"2026-04-23 01:04:57"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:57 +0000] \"POST /api/lab/book HTTP/1.1\" 201 408 \"-\" \"-\"","timestamp":"2026-04-23 01:04:57"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:34:58 +0000] \"GET /api/lab/org-appointments HTTP/1.1\" 200 456 \"-\" \"-\"","timestamp":"2026-04-23 01:04:58"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:00 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:05:00"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:01 +0000] \"POST /api/org/register HTTP/1.1\" 201 241 \"-\" \"-\"","timestamp":"2026-04-23 01:05:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:01 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:01 +0000] \"POST /api/invoices HTTP/1.1\" 201 612 \"-\" \"-\"","timestamp":"2026-04-23 01:05:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:01 +0000] \"POST /api/invoices/69e922e5dbf69fd6fd4bec43/payment HTTP/1.1\" 200 754 \"-\" \"-\"","timestamp":"2026-04-23 01:05:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:01 +0000] \"POST /api/invoices/69e922e5dbf69fd6fd4bec43/payment HTTP/1.1\" 200 889 \"-\" \"-\"","timestamp":"2026-04-23 01:05:01"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:02 +0000] \"GET /api/invoices HTTP/1.1\" 200 1037 \"-\" \"-\"","timestamp":"2026-04-23 01:05:02"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:04 +0000] \"POST /api/auth/register HTTP/1.1\" 201 416 \"-\" \"-\"","timestamp":"2026-04-23 01:05:04"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:05 +0000] \"POST /api/org/register HTTP/1.1\" 201 248 \"-\" \"-\"","timestamp":"2026-04-23 01:05:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:05 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:05 +0000] \"POST /api/org/users HTTP/1.1\" 201 484 \"-\" \"-\"","timestamp":"2026-04-23 01:05:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:05 +0000] \"POST /api/auth/login HTTP/1.1\" 200 409 \"-\" \"-\"","timestamp":"2026-04-23 01:05:05"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:06 +0000] \"POST /api/appointments HTTP/1.1\" 201 443 \"-\" \"-\"","timestamp":"2026-04-23 01:05:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:06 +0000] \"GET /api/appointments HTTP/1.1\" 200 579 \"-\" \"-\"","timestamp":"2026-04-23 01:05:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:06 +0000] \"PATCH /api/appointments/69e922eab45bcbc8cf05ccd8/cancel HTTP/1.1\" 200 560 \"-\" \"-\"","timestamp":"2026-04-23 01:05:06"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:08 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:05:08"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:09 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:05:09"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:09 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:09"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:09 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 01:05:09"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:09 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 01:05:09"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:10 +0000] \"POST /api/prescriptions HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 01:05:10"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:10 +0000] \"GET /api/prescriptions?patient=69e922ec085a363b1b841583 HTTP/1.1\" 200 565 \"-\" \"-\"","timestamp":"2026-04-23 01:05:10"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:10 +0000] \"POST /api/inpatient/beds HTTP/1.1\" 201 379 \"-\" \"-\"","timestamp":"2026-04-23 01:05:10"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:10 +0000] \"GET /api/inpatient/beds HTTP/1.1\" 200 369 \"-\" \"-\"","timestamp":"2026-04-23 01:05:10"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:10 +0000] \"POST /api/inpatient/admissions HTTP/1.1\" 201 426 \"-\" \"-\"","timestamp":"2026-04-23 01:05:10"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:13 +0000] \"POST /api/org/register HTTP/1.1\" 201 239 \"-\" \"-\"","timestamp":"2026-04-23 01:05:13"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:13 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:13"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:14 +0000] \"POST /api/org/users HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 01:05:14"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:14 +0000] \"POST /api/shifts HTTP/1.1\" 201 419 \"-\" \"-\"","timestamp":"2026-04-23 01:05:14"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:14 +0000] \"GET /api/shifts HTTP/1.1\" 200 493 \"-\" \"-\"","timestamp":"2026-04-23 01:05:14"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:14 +0000] \"POST /api/inventory HTTP/1.1\" 201 398 \"-\" \"-\"","timestamp":"2026-04-23 01:05:14"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:14 +0000] \"PATCH /api/inventory/69e922f2bcb7ebe54fcfe4d5/stock HTTP/1.1\" 200 390 \"-\" \"-\"","timestamp":"2026-04-23 01:05:14"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:17 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:05:17"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:17 +0000] \"POST /api/auth/login HTTP/1.1\" 200 491 \"-\" \"-\"","timestamp":"2026-04-23 01:05:17"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:17 +0000] \"POST /api/org/users HTTP/1.1\" 403 99 \"-\" \"-\"","timestamp":"2026-04-23 01:05:17"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:17 +0000] \"POST /api/auth/register HTTP/1.1\" 403 85 \"-\" \"-\"","timestamp":"2026-04-23 01:05:17"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:17 +0000] \"POST /api/org/users HTTP/1.1\" 201 490 \"-\" \"-\"","timestamp":"2026-04-23 01:05:17"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:18 +0000] \"GET /api/users/doctors HTTP/1.1\" 200 1087 \"-\" \"-\"","timestamp":"2026-04-23 01:05:18"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:27 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:05:27"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:27 +0000] \"POST /api/org/register HTTP/1.1\" 201 238 \"-\" \"-\"","timestamp":"2026-04-23 01:05:27"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:27 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:27"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:28 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 01:05:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:28 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 01:05:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:28 +0000] \"POST /api/bloodbank/donors HTTP/1.1\" 201 454 \"-\" \"-\"","timestamp":"2026-04-23 01:05:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:28 +0000] \"GET /api/bloodbank/stock HTTP/1.1\" 500 149 \"-\" \"-\"","timestamp":"2026-04-23 01:05:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:28 +0000] \"POST /api/bloodbank/stock HTTP/1.1\" 404 84 \"-\" \"-\"","timestamp":"2026-04-23 01:05:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:28 +0000] \"POST /api/auth/login HTTP/1.1\" 200 403 \"-\" \"-\"","timestamp":"2026-04-23 01:05:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:29 +0000] \"POST /api/lab/book HTTP/1.1\" 201 408 \"-\" \"-\"","timestamp":"2026-04-23 01:05:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:29 +0000] \"GET /api/lab/org-appointments HTTP/1.1\" 200 456 \"-\" \"-\"","timestamp":"2026-04-23 01:05:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:32 +0000] \"POST /api/auth/login HTTP/1.1\" 200 411 \"-\" \"-\"","timestamp":"2026-04-23 01:05:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:33 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:05:33"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:33 +0000] \"POST /api/auth/login HTTP/1.1\" 200 488 \"-\" \"-\"","timestamp":"2026-04-23 01:05:33"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:33 +0000] \"POST /api/org/users HTTP/1.1\" 403 99 \"-\" \"-\"","timestamp":"2026-04-23 01:05:33"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:33 +0000] \"GET /api/superadmin/orgs HTTP/1.1\" 200 3702 \"-\" \"-\"","timestamp":"2026-04-23 01:05:33"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:34 +0000] \"PATCH /api/superadmin/orgs/69e9230446d31e2b2bbb3f28/verify HTTP/1.1\" 200 404 \"-\" \"-\"","timestamp":"2026-04-23 01:05:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:34 +0000] \"POST /api/org/users HTTP/1.1\" 201 489 \"-\" \"-\"","timestamp":"2026-04-23 01:05:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:34 +0000] \"GET /api/superadmin/logs HTTP/1.1\" 403 97 \"-\" \"-\"","timestamp":"2026-04-23 01:05:34"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:37 +0000] \"POST /api/auth/register HTTP/1.1\" 201 416 \"-\" \"-\"","timestamp":"2026-04-23 01:05:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:37 +0000] \"POST /api/org/register HTTP/1.1\" 201 248 \"-\" \"-\"","timestamp":"2026-04-23 01:05:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:37 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:38 +0000] \"POST /api/org/users HTTP/1.1\" 201 484 \"-\" \"-\"","timestamp":"2026-04-23 01:05:38"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:38 +0000] \"POST /api/auth/login HTTP/1.1\" 200 409 \"-\" \"-\"","timestamp":"2026-04-23 01:05:38"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:38 +0000] \"POST /api/appointments HTTP/1.1\" 201 443 \"-\" \"-\"","timestamp":"2026-04-23 01:05:38"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:38 +0000] \"GET /api/appointments HTTP/1.1\" 200 579 \"-\" \"-\"","timestamp":"2026-04-23 01:05:38"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:38 +0000] \"PATCH /api/appointments/69e9230a8257066a5bb2dae5/cancel HTTP/1.1\" 200 560 \"-\" \"-\"","timestamp":"2026-04-23 01:05:38"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:40 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:05:40"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:41 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:05:41"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:41 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:41"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:41 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 01:05:41"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:41 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 01:05:41"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:42 +0000] \"POST /api/prescriptions HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 01:05:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:42 +0000] \"GET /api/prescriptions?patient=69e9230c07b3da3d0de2a0ff HTTP/1.1\" 200 565 \"-\" \"-\"","timestamp":"2026-04-23 01:05:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:42 +0000] \"POST /api/inpatient/beds HTTP/1.1\" 201 379 \"-\" \"-\"","timestamp":"2026-04-23 01:05:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:42 +0000] \"GET /api/inpatient/beds HTTP/1.1\" 200 369 \"-\" \"-\"","timestamp":"2026-04-23 01:05:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:42 +0000] \"POST /api/inpatient/admissions HTTP/1.1\" 201 426 \"-\" \"-\"","timestamp":"2026-04-23 01:05:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:44 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:05:44"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:44 +0000] \"POST /api/org/register HTTP/1.1\" 201 241 \"-\" \"-\"","timestamp":"2026-04-23 01:05:44"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:44 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:44"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:44 +0000] \"POST /api/invoices HTTP/1.1\" 201 612 \"-\" \"-\"","timestamp":"2026-04-23 01:05:44"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:45 +0000] \"POST /api/invoices/69e92310001393225c6e340d/payment HTTP/1.1\" 200 754 \"-\" \"-\"","timestamp":"2026-04-23 01:05:45"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:45 +0000] \"POST /api/invoices/69e92310001393225c6e340d/payment HTTP/1.1\" 200 889 \"-\" \"-\"","timestamp":"2026-04-23 01:05:45"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:45 +0000] \"GET /api/invoices HTTP/1.1\" 200 1037 \"-\" \"-\"","timestamp":"2026-04-23 01:05:45"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:47 +0000] \"POST /api/org/register HTTP/1.1\" 201 239 \"-\" \"-\"","timestamp":"2026-04-23 01:05:47"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:47 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:05:47"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:48 +0000] \"POST /api/org/users HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 01:05:48"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:48 +0000] \"POST /api/shifts HTTP/1.1\" 201 419 \"-\" \"-\"","timestamp":"2026-04-23 01:05:48"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:48 +0000] \"GET /api/shifts HTTP/1.1\" 200 493 \"-\" \"-\"","timestamp":"2026-04-23 01:05:48"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:48 +0000] \"POST /api/inventory HTTP/1.1\" 201 398 \"-\" \"-\"","timestamp":"2026-04-23 01:05:48"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:48 +0000] \"PATCH /api/inventory/69e92314173d54f7e50fe615/stock HTTP/1.1\" 200 390 \"-\" \"-\"","timestamp":"2026-04-23 01:05:48"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:51 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:05:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:51 +0000] \"POST /api/auth/login HTTP/1.1\" 200 491 \"-\" \"-\"","timestamp":"2026-04-23 01:05:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:51 +0000] \"POST /api/org/users HTTP/1.1\" 403 99 \"-\" \"-\"","timestamp":"2026-04-23 01:05:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:35:51 +0000] \"POST /api/auth/register HTTP/1.1\" 403 85 \"-\" \"-\"","timestamp":"2026-04-23 01:05:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:31 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:06:31"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:32 +0000] \"POST /api/auth/login HTTP/1.1\" 200 491 \"-\" \"-\"","timestamp":"2026-04-23 01:06:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:32 +0000] \"POST /api/org/users HTTP/1.1\" 403 99 \"-\" \"-\"","timestamp":"2026-04-23 01:06:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:32 +0000] \"POST /api/auth/register HTTP/1.1\" 403 85 \"-\" \"-\"","timestamp":"2026-04-23 01:06:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:32 +0000] \"POST /api/org/users HTTP/1.1\" 201 490 \"-\" \"-\"","timestamp":"2026-04-23 01:06:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:32 +0000] \"GET /api/users/doctors HTTP/1.1\" 200 1087 \"-\" \"-\"","timestamp":"2026-04-23 01:06:32"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:36 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:06:36"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:36 +0000] \"POST /api/org/register HTTP/1.1\" 201 238 \"-\" \"-\"","timestamp":"2026-04-23 01:06:36"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:36 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:06:36"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:37 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 01:06:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:37 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 01:06:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:37 +0000] \"POST /api/bloodbank/donors HTTP/1.1\" 201 454 \"-\" \"-\"","timestamp":"2026-04-23 01:06:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:37 +0000] \"GET /api/bloodbank/stock HTTP/1.1\" 200 1730 \"-\" \"-\"","timestamp":"2026-04-23 01:06:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:37 +0000] \"POST /api/bloodbank/stock HTTP/1.1\" 200 277 \"-\" \"-\"","timestamp":"2026-04-23 01:06:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:37 +0000] \"POST /api/auth/login HTTP/1.1\" 200 403 \"-\" \"-\"","timestamp":"2026-04-23 01:06:37"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:38 +0000] \"POST /api/lab/book HTTP/1.1\" 201 408 \"-\" \"-\"","timestamp":"2026-04-23 01:06:38"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:38 +0000] \"GET /api/lab/org-appointments HTTP/1.1\" 200 456 \"-\" \"-\"","timestamp":"2026-04-23 01:06:38"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:41 +0000] \"POST /api/auth/login HTTP/1.1\" 200 411 \"-\" \"-\"","timestamp":"2026-04-23 01:06:41"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:41 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:06:41"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:42 +0000] \"POST /api/auth/login HTTP/1.1\" 200 488 \"-\" \"-\"","timestamp":"2026-04-23 01:06:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:42 +0000] \"POST /api/org/users HTTP/1.1\" 403 99 \"-\" \"-\"","timestamp":"2026-04-23 01:06:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:42 +0000] \"GET /api/superadmin/orgs HTTP/1.1\" 200 3702 \"-\" \"-\"","timestamp":"2026-04-23 01:06:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:42 +0000] \"PATCH /api/superadmin/orgs/69e923492b4a32732de597d4/verify HTTP/1.1\" 200 404 \"-\" \"-\"","timestamp":"2026-04-23 01:06:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:42 +0000] \"POST /api/org/users HTTP/1.1\" 201 489 \"-\" \"-\"","timestamp":"2026-04-23 01:06:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:42 +0000] \"GET /api/superadmin/logs HTTP/1.1\" 403 97 \"-\" \"-\"","timestamp":"2026-04-23 01:06:42"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:45 +0000] \"POST /api/auth/register HTTP/1.1\" 201 416 \"-\" \"-\"","timestamp":"2026-04-23 01:06:45"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:45 +0000] \"POST /api/org/register HTTP/1.1\" 201 248 \"-\" \"-\"","timestamp":"2026-04-23 01:06:45"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:45 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:06:45"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:46 +0000] \"POST /api/org/users HTTP/1.1\" 201 484 \"-\" \"-\"","timestamp":"2026-04-23 01:06:46"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:46 +0000] \"POST /api/auth/login HTTP/1.1\" 200 409 \"-\" \"-\"","timestamp":"2026-04-23 01:06:46"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:46 +0000] \"POST /api/appointments HTTP/1.1\" 201 443 \"-\" \"-\"","timestamp":"2026-04-23 01:06:46"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:46 +0000] \"GET /api/appointments HTTP/1.1\" 200 579 \"-\" \"-\"","timestamp":"2026-04-23 01:06:46"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:47 +0000] \"PATCH /api/appointments/69e9234e3b6d4d02029c2ff6/cancel HTTP/1.1\" 200 560 \"-\" \"-\"","timestamp":"2026-04-23 01:06:47"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:50 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:06:50"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:50 +0000] \"POST /api/org/register HTTP/1.1\" 201 244 \"-\" \"-\"","timestamp":"2026-04-23 01:06:50"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:50 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:06:50"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:51 +0000] \"POST /api/org/users HTTP/1.1\" 201 462 \"-\" \"-\"","timestamp":"2026-04-23 01:06:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:51 +0000] \"POST /api/auth/login HTTP/1.1\" 200 480 \"-\" \"-\"","timestamp":"2026-04-23 01:06:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:51 +0000] \"POST /api/prescriptions HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 01:06:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:51 +0000] \"GET /api/prescriptions?patient=69e92351145bd78a63eef71e HTTP/1.1\" 200 565 \"-\" \"-\"","timestamp":"2026-04-23 01:06:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:51 +0000] \"POST /api/inpatient/beds HTTP/1.1\" 201 379 \"-\" \"-\"","timestamp":"2026-04-23 01:06:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:51 +0000] \"GET /api/inpatient/beds HTTP/1.1\" 200 369 \"-\" \"-\"","timestamp":"2026-04-23 01:06:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:51 +0000] \"POST /api/inpatient/admissions HTTP/1.1\" 201 426 \"-\" \"-\"","timestamp":"2026-04-23 01:06:51"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:54 +0000] \"POST /api/org/register HTTP/1.1\" 201 239 \"-\" \"-\"","timestamp":"2026-04-23 01:06:54"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:54 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:06:54"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:55 +0000] \"POST /api/org/users HTTP/1.1\" 201 486 \"-\" \"-\"","timestamp":"2026-04-23 01:06:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:55 +0000] \"POST /api/shifts HTTP/1.1\" 201 419 \"-\" \"-\"","timestamp":"2026-04-23 01:06:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:55 +0000] \"GET /api/shifts HTTP/1.1\" 200 493 \"-\" \"-\"","timestamp":"2026-04-23 01:06:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:55 +0000] \"POST /api/inventory HTTP/1.1\" 201 398 \"-\" \"-\"","timestamp":"2026-04-23 01:06:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:55 +0000] \"PATCH /api/inventory/69e92357e50a528b3a497aad/stock HTTP/1.1\" 200 390 \"-\" \"-\"","timestamp":"2026-04-23 01:06:55"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:58 +0000] \"POST /api/auth/register HTTP/1.1\" 201 410 \"-\" \"-\"","timestamp":"2026-04-23 01:06:58"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:58 +0000] \"POST /api/org/register HTTP/1.1\" 201 241 \"-\" \"-\"","timestamp":"2026-04-23 01:06:58"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:59 +0000] \"POST /api/auth/login HTTP/1.1\" 200 485 \"-\" \"-\"","timestamp":"2026-04-23 01:06:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:59 +0000] \"POST /api/invoices HTTP/1.1\" 201 612 \"-\" \"-\"","timestamp":"2026-04-23 01:06:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:59 +0000] \"POST /api/invoices/69e9235b8e9d66322b2b7bb9/payment HTTP/1.1\" 200 754 \"-\" \"-\"","timestamp":"2026-04-23 01:06:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:36:59 +0000] \"POST /api/invoices/69e9235b8e9d66322b2b7bb9/payment HTTP/1.1\" 200 889 \"-\" \"-\"","timestamp":"2026-04-23 01:06:59"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [22/Apr/2026:19:37:00 +0000] \"GET /api/invoices HTTP/1.1\" 200 1037 \"-\" \"-\"","timestamp":"2026-04-23 01:07:00"}
+{"error":"Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/","level":"error","message":"MongoDB connection failed","timestamp":"2026-04-23 17:06:09"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 17:06:52"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 17:06:53"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:36:59 +0000] \"GET /api/auth/me HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:06:59"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:36:59 +0000] \"GET /api/auth/me HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:06:59"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:36:59 +0000] \"GET /api/auth/me HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:06:59"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:36:59 +0000] \"GET /api/auth/me HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:06:59"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:04 +0000] \"GET /api/inpatient/admissions HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:04"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:04 +0000] \"GET /api/shifts HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:04"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:04 +0000] \"GET /api/appointments HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:04"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:04 +0000] \"GET /api/inpatient/admissions HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:04"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:04 +0000] \"GET /api/appointments HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:04"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:04 +0000] \"GET /api/shifts HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:04"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:16 +0000] \"GET /api/inpatient/admissions HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:16"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:16 +0000] \"GET /api/shifts HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:16"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:16 +0000] \"GET /api/appointments HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:16"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:16 +0000] \"GET /api/inpatient/admissions HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:16"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:16 +0000] \"GET /api/appointments HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:16"}
+{"level":"info","message":"::1 - - [23/Apr/2026:11:37:16 +0000] \"GET /api/shifts HTTP/1.1\" 304 - \"http://localhost:5173/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0\"","timestamp":"2026-04-23 17:07:16"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 18:23:42"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 18:23:42"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:09:21"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:09:21"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:09:31"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:09:31"}
+{"level":"info","message":"::1 - - [23/Apr/2026:13:39:55 +0000] \"GET /api/auth/me HTTP/1.1\" 401 64 \"-\" \"Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8115\"","timestamp":"2026-04-23 19:09:55"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:10:08"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:10:08"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:10:40"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:10:40"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:10:52"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:10:52"}
+{"level":"info","message":"::1 - - [23/Apr/2026:13:40:56 +0000] \"POST /api/auth/login HTTP/1.1\" 200 417 \"-\" \"-\"","timestamp":"2026-04-23 19:10:56"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:11:02"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:11:03"}
+{"level":"info","message":"::1 - - [23/Apr/2026:13:41:07 +0000] \"POST /api/auth/login HTTP/1.1\" 401 68 \"-\" \"-\"","timestamp":"2026-04-23 19:11:07"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:11:59"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:11:59"}
+{"level":"info","message":"::1 - - [23/Apr/2026:13:42:04 +0000] \"POST /api/auth/login HTTP/1.1\" 200 496 \"-\" \"-\"","timestamp":"2026-04-23 19:12:04"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:17:04"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:17:04"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:19:27"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:19:27"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:19:30"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:19:31"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:19:38"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:19:39"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:20:03"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:20:08"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2026-04-23 19:20:27"}
+{"level":"info","message":"HIMS server running on http://localhost:5000","timestamp":"2026-04-23 19:20:29"}

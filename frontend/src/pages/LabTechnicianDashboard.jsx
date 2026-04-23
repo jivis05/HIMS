@@ -16,7 +16,7 @@ export const LabTechnicianDashboard = () => {
     try {
       setIsLoading(true);
       const res = await labReportAPI.getAll();
-      setLabReports(res.data.labReports || []);
+      setLabReports(res.data.data.labReports || []);
     } catch (error) {
       console.error('Error fetching lab reports', error);
     } finally {

@@ -17,7 +17,10 @@ const createSuperAdmin = async () => {
     console.log('Connected to MongoDB for Super Admin seeding...');
 
     const adminEmail = 'superadmin@hims.com';
-    const adminPassword = 'Test@1234';
+    const adminPassword = process.env.SEED_PASSWORD;
+    if (!adminPassword) {
+      throw new Error('SEED_PASSWORD is not defined in .env. Seeding aborted for security.');
+    }
 
     const adminExists = await User.findOne({ email: adminEmail });
     if (adminExists) {

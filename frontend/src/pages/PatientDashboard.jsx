@@ -158,7 +158,7 @@ export const PatientDashboard = () => {
           <div className="clinical-card p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold font-display">Upcoming Appointments</h3>
-              <button onClick={fetchDashboardData} className="text-primary hover:text-primary-hover font-semibold text-sm">Refresh</button>
+              <button onClick={refetch} className="text-primary hover:text-primary-hover font-semibold text-sm">Refresh</button>
             </div>
             
             <div className="space-y-4">

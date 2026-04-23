@@ -16,8 +16,8 @@ export const StaffManagement = () => {
       orgAPI.getProfile()
     ]);
     return {
-      staff: staffRes.data.staff || [],
-      org: orgRes.data.organization
+      staff: staffRes.data.data || [],
+      org: orgRes.data.data
     };
   };
 

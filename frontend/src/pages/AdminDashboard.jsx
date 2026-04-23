@@ -30,10 +30,10 @@ export const AdminDashboard = () => {
       analyticsAPI.getStats()
     ]);
     return {
-      users: userRes.data.users || [],
-      beds: bedRes.data.beds || [],
-      inventory: invRes.data.inventory || [],
-      shifts: shiftRes.data.shifts || [],
+      users: userRes.data.data || [],
+      beds: bedRes.data.data || [],
+      inventory: invRes.data.data || [],
+      shifts: shiftRes.data.data || [],
       analytics: analyticsRes.data.data
     };
   };

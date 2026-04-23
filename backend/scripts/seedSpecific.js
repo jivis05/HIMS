@@ -16,6 +16,10 @@ const Log = require('../models/Log');
 
 const seedSpecific = async () => {
   try {
+    const PASSWORD = process.env.SEED_PASSWORD;
+    if (!PASSWORD) {
+      throw new Error('SEED_PASSWORD is not defined in .env. Seeding aborted for security.');
+    }
     console.log('[SEED] Starting specific database reset...');
 
     // 1. Clear all data
@@ -32,7 +36,7 @@ const seedSpecific = async () => {
       firstName: 'Global',
       lastName: 'Admin',
       email: 'superadmin@hims.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'SUPER_ADMIN',
       isApproved: true
     });
@@ -70,7 +74,7 @@ const seedSpecific = async () => {
       firstName: 'Hospital',
       lastName: 'Admin',
       email: 'admin@hospital.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'ORG_ADMIN',
       organizationId: hospital._id,
       isApproved: true
@@ -82,7 +86,7 @@ const seedSpecific = async () => {
       firstName: 'Hospital',
       lastName: 'Doctor',
       email: 'doctor@hospital.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'DOCTOR',
       organizationId: hospital._id,
       isApproved: true
@@ -93,7 +97,7 @@ const seedSpecific = async () => {
       firstName: 'Clinic',
       lastName: 'Admin',
       email: 'admin@clinic.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'ORG_ADMIN',
       organizationId: clinic._id,
       isApproved: true
@@ -105,7 +109,7 @@ const seedSpecific = async () => {
       firstName: 'Clinic',
       lastName: 'Nurse',
       email: 'nurse@clinic.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'NURSE',
       organizationId: clinic._id,
       isApproved: true
@@ -116,7 +120,7 @@ const seedSpecific = async () => {
       firstName: 'Lab',
       lastName: 'Admin',
       email: 'admin@lab.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'ORG_ADMIN',
       organizationId: laboratory._id,
       isApproved: true
@@ -128,7 +132,7 @@ const seedSpecific = async () => {
       firstName: 'Lab',
       lastName: 'Technician',
       email: 'labtech@lab.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'LAB_TECH',
       organizationId: laboratory._id,
       isApproved: true
@@ -139,7 +143,7 @@ const seedSpecific = async () => {
       firstName: 'Patient',
       lastName: 'One',
       email: 'patient1@hims.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'PATIENT',
       isApproved: true
     });
@@ -148,7 +152,7 @@ const seedSpecific = async () => {
       firstName: 'Patient',
       lastName: 'Two',
       email: 'patient2@hims.com',
-      password: 'Test@1234',
+      password: PASSWORD,
       role: 'PATIENT',
       isApproved: true
     });

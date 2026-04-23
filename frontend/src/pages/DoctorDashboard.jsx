@@ -28,9 +28,9 @@ export const DoctorDashboard = () => {
       shiftAPI.getAll()
     ]);
     return {
-      appointments: apptRes.data.appointments || [],
-      admissions: admRes.data.admissions || [],
-      shifts: shiftRes.data.shifts || []
+      appointments: apptRes.data.data || [],
+      admissions: admRes.data.data || [],
+      shifts: shiftRes.data.data || []
     };
   };
 
@@ -168,7 +168,7 @@ export const DoctorDashboard = () => {
             <div className="flex-1 clinical-card p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold font-display">Appointments</h3>
-                <button onClick={fetchData} className="text-primary hover:text-primary-hover font-semibold text-sm flex items-center gap-1">
+                <button onClick={refetch} className="text-primary hover:text-primary-hover font-semibold text-sm flex items-center gap-1">
                   <span className="material-symbols-outlined text-sm">refresh</span> Refresh
                 </button>
               </div>
@@ -254,7 +254,7 @@ export const DoctorDashboard = () => {
               <h2 className="text-3xl font-display font-bold text-gray-900 tracking-tight">Active Inpatients</h2>
               <p className="text-gray-500 mt-1">Patients admitted under your care or hospital-wide rounds.</p>
             </div>
-            <button onClick={fetchData} className="btn-secondary flex items-center gap-2">
+            <button onClick={refetch} className="btn-secondary flex items-center gap-2">
               <span className="material-symbols-outlined">refresh</span>
               Refresh Rounds
             </button>

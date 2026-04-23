@@ -20,7 +20,7 @@ export const PatientEMR = () => {
       setIsLoading(true);
       setError(null);
       const res = await userAPI.getEMR(id, params);
-      setEmrData(res.data.emr);
+      setEmrData(res.data.data);
       setShowBreakGlassModal(false);
     } catch (err) {
       console.error('Error fetching EMR', err);

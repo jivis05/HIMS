@@ -6,19 +6,24 @@ const path = require('path');
 // Load env from backend directory
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
+const PASSWORD = process.env.SEED_PASSWORD;
+if (!PASSWORD) {
+  throw new Error('SEED_PASSWORD is not defined in .env. Seeding aborted for security.');
+}
+
 const users = [
   {
     firstName: 'Arthur',
     lastName: 'Morgan',
     email: 'arthur.patient@himsystem.com',
-    password: 'Test@1234',
+    password: PASSWORD,
     role: 'PATIENT',
   },
   {
     firstName: 'Meredith',
     lastName: 'Grey',
     email: 'meredith.doctor@himsystem.com',
-    password: 'Test@1234',
+    password: PASSWORD,
     role: 'DOCTOR',
     specialty: 'General Surgery',
   },
@@ -26,28 +31,28 @@ const users = [
     firstName: 'Florence',
     lastName: 'Nightingale',
     email: 'florence.nurse@himsystem.com',
-    password: 'Test@1234',
+    password: PASSWORD,
     role: 'NURSE',
   },
   {
     firstName: 'Pam',
     lastName: 'Beesly',
     email: 'pam.reception@himsystem.com',
-    password: 'Test@1234',
+    password: PASSWORD,
     role: 'RECEPTIONIST',
   },
   {
     firstName: 'Walter',
     lastName: 'White',
     email: 'walter.pharmacy@himsystem.com',
-    password: 'Test@1234',
+    password: PASSWORD,
     role: 'PHARMACIST',
   },
   {
     firstName: 'Dexter',
     lastName: 'Morgan',
     email: 'dexter.lab@himsystem.com',
-    password: 'Test@1234',
+    password: PASSWORD,
     role: 'LAB_TECHNICIAN',
   },
 ];

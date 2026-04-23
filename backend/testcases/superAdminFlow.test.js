@@ -9,6 +9,7 @@ describe('Super Admin Workflow & Organization Verification', () => {
   let orgAdminToken;
   let orgId;
   let doctorEmail = 'test.doc@test.com';
+  const TEST_PASSWORD = process.env.SEED_PASSWORD || 'YOUR_SECURE_PASSWORD';
 
   beforeAll(async () => {
     if (mongoose.connection.readyState === 0) {
@@ -22,14 +23,14 @@ describe('Super Admin Workflow & Organization Verification', () => {
       firstName: 'Super',
       lastName: 'Admin',
       email: 'super@hims.com',
-      password: 'Test@1234',
+      password: TEST_PASSWORD,
       role: 'SUPER_ADMIN',
       isApproved: true
     });
 
     const superRes = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'super@hims.com', password: 'Test@1234' });
+      .send({ email: 'super@hims.com', password: TEST_PASSWORD });
     
     superAdminToken = superRes.body.data.token;
   });
@@ -50,7 +51,7 @@ describe('Super Admin Workflow & Organization Verification', () => {
         adminFirstName: 'Test',
         adminLastName: 'Admin',
         adminEmail: 'admin@test.com',
-        adminPassword: 'Test@1234'
+        adminPassword: TEST_PASSWORD
       });
 
     expect(res.statusCode).toBe(201);
@@ -61,7 +62,7 @@ describe('Super Admin Workflow & Organization Verification', () => {
 
     const loginRes = await request(app)
       .post('/api/auth/login')
-      .send({ email: 'admin@test.com', password: 'Test@1234' });
+      .send({ email: 'admin@test.com', password: TEST_PASSWORD });
     orgAdminToken = loginRes.body.data.token;
     expect(orgAdminToken).toBeDefined();
   });
@@ -75,7 +76,7 @@ describe('Super Admin Workflow & Organization Verification', () => {
         firstName: 'Test',
         lastName: 'Doctor',
         email: doctorEmail,
-        password: 'Test@1234',
+        password: TEST_PASSWORD,
         role: 'DOCTOR'
       });
 
@@ -113,7 +114,7 @@ describe('Super Admin Workflow & Organization Verification', () => {
         firstName: 'Test',
         lastName: 'Doctor',
         email: doctorEmail,
-        password: 'Test@1234',
+        password: TEST_PASSWORD,
         role: 'DOCTOR',
         specialty: 'General'
       });
