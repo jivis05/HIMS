@@ -34,7 +34,7 @@ export const PatientDashboard = () => {
     return {
       appointments: apptRes.data.data || [],
       prescriptions: rxRes.data.data || [],
-      labReports: labRes.data.data || [],
+      labReports: labRes.data.data?.labReports || labRes.data.data || [],
       doctors: docRes.data.data || [],
       admission: myAdmission,
       labAppointments: myLabRes.data.data || []
