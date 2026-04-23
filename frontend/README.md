@@ -1,16 +1,79 @@
-# React + Vite
+# WeaveHealth HIMS - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend application for the WeaveHealth Hospital Information Management System (HIMS). It provides role-based dashboards, patient management, and comprehensive clinical workflows.
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Framework:** [React 19](https://react.dev/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Routing:** [React Router DOM](https://reactrouter.com/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **HTTP Client:** [Axios](https://axios-http.com/)
+- **Internationalization:** [i18next](https://www.i18next.com/)
 
-## React Compiler
+## 📂 Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```text
+frontend/
+├── public/                # Static assets (favicon, etc.)
+└── src/                   # Main application source code
+    ├── assets/            # Images, fonts, and local static assets
+    ├── components/        # Reusable UI components (common, layout, auth)
+    ├── context/           # React Context providers (Auth, Theme)
+    ├── data/              # Mock data and constants
+    ├── hooks/             # Custom React hooks
+    ├── pages/             # Role-specific dashboard views
+    │   ├── AdminDashboard.jsx
+    │   ├── DoctorDashboard.jsx
+    │   ├── PatientDashboard.jsx
+    │   ├── ReceptionistDashboard.jsx
+    │   └── ...
+    ├── services/          # API integration and Axios interceptors
+    ├── App.jsx            # Main app component and routing configuration
+    └── main.jsx           # React entry point
+```
 
-## Expanding the ESLint configuration
+## 🛠️ Setup & Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Environment Configuration:**
+   Copy `.env.example` to `.env` and update the API base URL if necessary.
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Start Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for Production:**
+   ```bash
+   npm run build
+   ```
+
+5. **Preview Production Build:**
+   ```bash
+   npm run preview
+   ```
+
+## 🔐 Key Features
+
+- **Role-Based Dashboards:** Unique UI and routing for Super Admins, Admins, Doctors, Nurses, Receptionists, Lab Technicians, Pharmacy, Blood Bank, and Patients.
+- **Secure Authentication:** JWT-based authentication integrated via Axios interceptors.
+- **Responsive Design:** Fully responsive layout built with Tailwind CSS.
+- **Dynamic Animations:** Smooth transitions and interactions powered by Framer Motion.
+- **Internationalization (i18n):** Multi-language support structure using i18next.
+
+## 📜 Linting & Code Quality
+
+The project uses ESLint for code quality enforcement. Run the linter using:
+```bash
+npm run lint
+```
