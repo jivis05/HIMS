@@ -1,0 +1,21 @@
+name: HIMS CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: CI Step
+      run: echo "CI is working"
+
+    - name: Test Step
+      run: echo "Testing HIMS"
+
+    - name: CD Step
+      run: echo "Deploying HIMS"
