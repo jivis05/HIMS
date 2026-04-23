@@ -1,12 +1,16 @@
 import axios from 'axios';
 
 // Central Axios instance pointing at our Express backend.
-// The base URL is read from the VITE_API_BASE_URL environment variable so that
-// the same build artefact works across local, staging, and production without
-// code changes.  Fall back to the default local dev address only when the
-// variable is absent.
+// The base URL is read from the VITE_API_BASE_URL environment variable.
+// We automatically append '/api' if it's missing to ensure requests hit the correct backend routes.
+let base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+base = base.replace(/\/$/, ''); // strip trailing slash if present
+if (!base.endsWith('/api')) {
+  base += '/api';
+}
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
+  baseURL: base,
   headers: { 'Content-Type': 'application/json' },
 });
 
